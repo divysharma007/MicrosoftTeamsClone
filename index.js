@@ -22,8 +22,7 @@ app.use(
 		secret: "my secret",
 		resave: "false",
 		saveUninitialized: "false",
-		store: store,
-		logged:"false"
+		store: store
 	})
 );
 store.on("error", function (error) {
