@@ -41,28 +41,25 @@ con.on("open", () => {
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use("/", authrouter);
 
 app.use((req, res, next) => {
 	
-	if(req.session.logged==undefined)next()
-	console.log(req.session.logged);
-	if (req.session.logged) {
-		
-			
-		
-		console.log('--------------', req.session.userdata)
-	} else {
-     res.redirect('/');
-	 }
-	next()
-	
+	if(!req.session.logged)req.session.logged=false
+	console.log(req.session.logged,req.url);
+	if (!req.session.logged) {
+		res.redirect('/');
+	}
+	else {
+       
+		next();
+	}
 })
 app.use("/room", roomrouter);
 app.use("/logout", (req, res) => {
     req.session.destroy();
 	res.send("logged out");
 });
-app.use('/', authrouter);
 
 io.on("connection", (socket) => {
 	console.log("socket connected ");

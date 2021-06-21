@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const msal = require("@azure/msal-node");
 const axios = require("axios");
 const { rawListeners } = require("../models/Room");
-
+const User= require("../models/User");
 const SERVER_PORT = 3000;
 
 let accesstoken;
@@ -65,11 +65,20 @@ router.get("/data", (req, res) => {
 		method: "GET",
 		headers: { Authorization: `Bearer ${accesstoken}` },
 	})
-        .then((data) => {
+        .then(async(data) => {
             
 			req.session.userdata = data.data;
-            console.log(data.data)
-            id=data.id
+            console.log(data.data.displayName)
+			user = await User.find({ mail: data.data.userPrincipalName });
+			console.log(user,data.data.displayName,data.data.mail)
+			if (!user.length) {
+				
+				const newuser = new User({
+					mail: data.data.userPrincipalName,
+					username: data.data.displayName,
+				});
+				await newuser.save()
+			}
 			res.redirect("/room/");
 		})
 		.catch((err) => {

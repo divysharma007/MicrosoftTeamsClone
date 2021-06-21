@@ -1,56 +1,59 @@
-const express = require('express')
-const router = express.Router()
-const room = require('../models/Room')
-const user = require("../models/User");
-const server = require('../index.js')
-module.exports = router
+const express = require("express");
+const router = express.Router();
+const room = require("../models/Room");
+const User = require("../models/User");
+const server = require("../index.js");
+module.exports = router;
 const { v4: uuidV4 } = require("uuid");
-router.get('/', async (req, res) => {
-    
-    try {
-        const all_rooms = await room.find()
-        // console.log(all_rooms)
-        const data = req.session.userdata
-        console.log(data)
-        
-        res.render('home',{'rooms': all_rooms})
-    } catch (err) {
-        res.send('Error' + err)
-    }
-    
-})
+router.get("/", async (req, res) => {
+	try {
+		const user = await User.findOne({
+			mail: req.session.userdata.userPrincipalName
+		}).populate('rooms');
+		
+        console.log(user, "3535353");
+     
+		// console.log(user.rooms, "433434");
 
-router.post('/', async(req, res) => {
-    
-    const newroom = new room({
-        name: req.body.name,
-        discription:req.body.discription
-    })
-    console.log(req.body)
-    try {
-        const rm = await newroom.save()
-        res.send(rm)
-    } catch (err) {
-        res.send('Error' + err)
-    }
-  
-})
+		res.render("home", { rooms: user.rooms });
+	} catch (err) {
+		res.send("Error" + err);
+	}
+});
 
 router.get("/:id/video/", (req, res) => {
-    console.log(req.params.id)
+
+    console.log(req.params.id);
+    
 	res.redirect(`./${uuidV4()}`);
 });
 
-
-
-
 router.get("/:id/video/:video", async (req, res) => {
+
     console.log(req.params.video);
-    res.render("video-room", { roomId: req.params.video});
+    const user = await User.findOne({
+			mail: req.session.userdata.userPrincipalName,
+		});
+		var auth = user.rooms.includes(req.params.id);
+		if (auth) {
+			console.log(user.rooms, single_room, auth);
+			res.render("video-room", { roomId: req.params.video });
+		} else {
+			res.send("not Authorized");
+		}
+	
 });
 
 router.get("/:id/", async (req, res) => {
-	single_room = await room.findById(req.params.id);
-	console.log(single_room);
-	res.render("room", { room: single_room });
+    single_room = await room.findById(req.params.id);
+    const user = await User.findOne({
+				mail: req.session.userdata.userPrincipalName,
+    })
+    var auth =  user.rooms.includes(req.params.id);
+    if (auth) {
+        console.log(user.rooms, single_room, auth);
+        res.render("room", { room: single_room });
+    } else {
+        res.send('not Authorized')
+    }
 });
