@@ -7,6 +7,7 @@ module.exports = router;
 const { v4: uuidV4 } = require("uuid");
 router.get("/", async (req, res) => {
 	try {
+		console.log(req.session.userdata);
 		const user = await User.findOne({
 			mail: req.session.userdata.userPrincipalName
 		}).populate('rooms');
@@ -45,7 +46,8 @@ router.get("/:id/video/:video", async (req, res) => {
 });
 
 router.get("/:id/", async (req, res) => {
-    single_room = await room.findById(req.params.id);
+	single_room = await room.findById(req.params.id);
+	
     const user = await User.findOne({
 				mail: req.session.userdata.userPrincipalName,
     })

@@ -13,7 +13,7 @@ const config = {
 		clientId: "593d89bc-523b-4e46-9d9c-f97753ac8ae9",
 		authority: "https://login.microsoftonline.com/common",
 		clientSecret: "D~6Pp~38Y6yPb1w.2X_Ltnw~YN-OA27xw7",
-		postlogoutRedirectUri: "https://localhost:3000/logout/",
+		postlogoutRedirectUri: "https://meteor-teams.herokuapp.com/logout/",
 	},
 	system: {
 		loggerOptions: {
@@ -29,7 +29,7 @@ router.get("/", (req, res) => {
     req.session.logged = true;
 	const authCodeUrlParameters = {
 		scopes: ["user.read", "Mail.read"],
-		redirectUri: "http://localhost:3000/redirect",
+		redirectUri: "https://meteor-teams.herokuapp.com/redirect",
 	};
 
 	cca
@@ -44,7 +44,7 @@ router.get("/redirect", (req, res) => {
 	const tokenRequest = {
 		code: req.query.code,
 		scopes: ["user.read", "mail.read"],
-		redirectUri: "http://localhost:3000/redirect",
+		redirectUri: "https://meteor-teams.herokuapp.com/redirect",
 	};
 
 	cca
@@ -68,7 +68,8 @@ router.get("/data", (req, res) => {
         .then(async(data) => {
             
 			req.session.userdata = data.data;
-            console.log(data.data.displayName)
+		
+            console.log(req.session.userdata.displayName)
 			user = await User.find({ mail: data.data.userPrincipalName });
 			console.log(user,data.data.displayName,data.data.mail)
 			if (!user.length) {

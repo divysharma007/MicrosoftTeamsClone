@@ -33,7 +33,7 @@ const con = mongoose.connection;
 
 con.on("open", () => {
 	console.log("connected...");
-	server.listen(3000, () => {
+	server.listen(process.env.PORT || 3000, () => {
 		console.log("listening on 3000");
 	});
 });
