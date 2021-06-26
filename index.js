@@ -8,8 +8,11 @@ const io = require("socket.io")(server);
 const bodyParser = require("body-parser");
 const session = require("express-session");
 const mongodbStore = require("connect-mongodb-session")(session);
+var path = require("path");
 app.set("view engine", "ejs");
-app.use(express.static("views"));
+
+app.use(express.static(path.join(__dirname, "/public")));
+console.log(path.join(__dirname, "/public"));
 dburi =
 	"mongodb+srv://divy:abc@cluster0.ehpvg.mongodb.net/microsoft-clone?retryWrites=true&w=majority";
 mongoose.connect(dburi, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -31,7 +34,7 @@ store.on("error", function (error) {
 const con = mongoose.connection;
 
 
-con.on("open", () => {
+con.on("open", () => {	
 	console.log("connected...");
 	server.listen(process.env.PORT || 3000, () => {
 		console.log("listening on 3000");
@@ -64,6 +67,7 @@ app.use("/logout", (req, res) => {
 io.on("connection", (socket) => {
 	console.log("socket connected ");
 	socket.on("join-chat-room", (roomid) => {
+		console.log(roomid)
 		socket.join(roomid);
 		console.log(socket.id, roomid);
 

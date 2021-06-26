@@ -1,11 +1,7 @@
-const path = require("path");
 const router = require("express").Router();
-const bodyParser = require("body-parser");
 const msal = require("@azure/msal-node");
 const axios = require("axios");
-const { rawListeners } = require("../models/Room");
 const User= require("../models/User");
-const SERVER_PORT = 3000;
 
 let accesstoken;
 const config = {
@@ -59,7 +55,7 @@ router.get("/redirect", (req, res) => {
 			res.status(500).send(error);
 		});
 });
-var id;
+
 router.get("/data", (req, res) => {
 	const response = axios("https://graph.microsoft.com/v1.0/me", {
 		method: "GET",
@@ -70,9 +66,9 @@ router.get("/data", (req, res) => {
 			req.session.userdata = data.data;
 		
             console.log(req.session.userdata.displayName)
-			user = await User.find({ mail: data.data.userPrincipalName });
+			user = await User.findone({ mail: data.data.userPrincipalName });
 			console.log(user,data.data.displayName,data.data.mail)
-			if (!user.length) {
+			if (!user) {
 				
 				const newuser = new User({
 					mail: data.data.userPrincipalName,
