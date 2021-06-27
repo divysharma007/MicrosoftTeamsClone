@@ -72,18 +72,24 @@ window.addEventListener(
 );
 
 const chat = () => {
-	console.log("11111");
+	
 	var x = document.getElementById("main__right");
 	var y = document.getElementById("main__left");
+	
 	
 	if (x.style.display === "none" || y.style.width == "100%") {
 		
 		x.style.display = "flex";
 		 document.getElementById("chat_message").focus();
 		y.style.width = "80%";
+		document.getElementById("chat-btn").innerHTML = "chat_bubble_outline";
 	} else {
 		y.style.width = "100%";
 		x.style.display = "none";
+		document.getElementById("chat-btn").innerHTML = "chat_bubble";
 	}
 	Dish();
 };
+const change_color = () => {
+	document.getElementById("mic-btn").style.backgroundColor="#cc3833";
+}

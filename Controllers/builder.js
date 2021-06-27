@@ -3,10 +3,10 @@ const { RtcTokenBuilder, RtcRole } = require("agora-access-token");
 // IMPORTANT! Build token with either the uid or with the user account. Comment out the option you do not want to use below.
 
 // Build token with uid
-const builder = () => {
+const builder = (channelname) => {
 	const agoraappID = "a4fd8db003b946ad91dca2bc071f2019";
 	const appCertificate = "389047fde19c47d4a7f495caee723fb0";
-	const channelName = "divy";
+	const channelName = channelname;
 	const uid = Math.floor(Math.random() * 1000) + 1;
 	const screenuid = Math.floor(Math.random() * 1000) + 1;
 

@@ -32,15 +32,15 @@ router.get("/:id/video/", (req, res) => {
 
 router.get("/:id/video/:video", async (req, res) => {
 
-    // console.log(req.params.video);
-    // const user = await User.findOne({
-	// 		mail: req.session.userdata.userPrincipalName,
-	// 	});
-	// 	var auth = user.rooms.includes(req.params.id);
-	var auth = true;
+    console.log(req.params.video);
+    const user = await User.findOne({
+			mail: req.session.userdata.userPrincipalName,
+		});
+		var auth = user.rooms.includes(req.params.id);
+	    // var auth = true;
 		if (auth) {
-			// console.log(user.rooms, single_room, auth);
-			const builders = builder();
+			 
+			const builders = builder(req.params.video);
 			console.log(builders)
 				res.render("vroom", {
 					uid: builders.uid,
@@ -49,6 +49,7 @@ router.get("/:id/video/:video", async (req, res) => {
 					token: builders.token,
 					screentoken: builders.screentoken,
 					screenuid: builders.screenuid,
+					username:req.session.userdata.displayName
 				});
 		} else {
 			res.send("not Authorized");

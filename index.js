@@ -76,6 +76,10 @@ io.on("connection", (socket) => {
 			socket.broadcast.to(roomid).emit("message", message);
 			console.log("message received and broadcasted");
 		});
+		socket.on("videouser", (user) => {
+				socket.broadcast.to(roomid).emit("videouser", user);
+				console.log(`${user} received and broadcasted`);
+		})
 	});
 	socket.on("join-room", (roomId, userId) => {
 		socket.join(roomId);

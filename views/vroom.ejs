@@ -11,65 +11,68 @@
 			var agoraAppId = "<%= agoraappID %>";
 			var screenuid = "<%= screenuid %>";
 			var screentoken = "<%= screentoken %>";
-			
+			var username = "<%= username %>";
 		</script>
 		<link rel="stylesheet" href="/video-style.css" />
-		<title>Video Call App</title>
+		<link
+			href="https://fonts.googleapis.com/icon?family=Material+Icons"
+			rel="stylesheet"
+		/>
+		<title>Video Call</title>
 	</head>
 	<body>
 		<div class="main">
-			<div id="main__left" style="width: 100%;">
+			<div id="main__left" style="width: 100%">
 				<div class="main__videos">
 					<div id="video-grid"></div>
 				</div>
 				<div class="main__controls">
 					<div class="main__controls__block">
-						<div class="main__controls__button main__mute__button" id="mic-btn">
-							<i id="mic-icon" class="fas fa-microphone"></i>
-							<span>Mute</span>
+						<div class="main__controls__button" id="mic-btn">
+							<!-- <span id="mic-icon" class="material-icons-outlined" style="font-size:15px">mic</span> -->
+							<span id="mic-icon" class="material-icons">mic</span>
+
+							<!-- <span>Mute</span> -->
 						</div>
-						<div
-							id="video-btn"
-							class="main__controls__button main__video__button"
-						>
-							<i id="video-icon" class="fas fa-video"></i>
-							<span id="setvideo">Stop Video</span>
+						<div id="video-btn" class="main__controls__button">
+							<span id="video-icon" class="material-icons">videocam</span>
+
+							<!-- <span id="setvideo">Stop Video</span> -->
 						</div>
-						<div
-							onclick="screen()"
-							class="main__controls__button main__ss__button" id="screen-share-btn"
-						>
-							<i class="fas fa-video" id="screen-share-icon"></i>
-							<span id="screen-share">Screen Share</span>
+						<div class="main__controls__button" id="screen-share-btn">
+							<span class="material-icons" id="screen-share-icon"
+								>screen_share</span
+							>
+
+							<!-- <span id="screen-share">Screen Share</span> -->
 						</div>
-					</div>
-					<div class="main__controls__block">
+
 						<div class="main__controls__button">
-							<i class="fas fa-shield-alt"></i>
-							<span>Security</span>
-						</div>
-						<div class="main__controls__button">
-							<i class="fas fa-user-friends"></i>
-							<span>Participants</span>
+							<span class="material-icons">group</span>
+							<!-- <span>Participants</span> -->
 						</div>
 						<div class="main__controls__button" onclick="chat()">
-							<i class="fas fa-comment-alt"></i>
-							<span>Chat</span>
+							<span id="chat-btn" class="material-icons">chat_bubble</span>
+							<!-- <span>Chat</span> -->
 						</div>
-					</div>
-					<div class="main__controls__block">
-						<div class="main__controls__button">
-							<span class="leave-meeting">Leave Meeting</span>
+						<div
+							class="main__controls__button"
+							id="exit-btn"
+							style="background-color: #ea4335"
+						>
+							<span class="material-icons">call_end</span>
 						</div>
 					</div>
 				</div>
 			</div>
 			<div id="main__right">
-				<div class="main__header">
+				<!-- <div class="main__header">
 					<p>Chat</p>
-				</div>
-				<div id="main__chat__window" >
-					
+				</div> -->
+				<div id="main__chat__window">
+					<div class="main__header">
+						<p>Messages..</p>
+					</div>
 				</div>
 
 				<div class="main__message__container">
@@ -78,7 +81,15 @@
 						type="text"
 						placeholder="Type message here..."
 					/>
-					<button class="send" onclick="message()">Send</button>
+					<div class="send">
+						<span
+							class="material-icons"
+							class="send"
+							onclick="message()"
+							style="color: whitesmoke"
+							>send</span
+						>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -88,7 +99,7 @@
 	<script src="/socket.io/socket.io.js" defer></script>
 	<script src="/grid_resize.js" defer></script>
 	<!-- <script src="/script.js" defer></script> -->
-	<script src="https://kit.fontawesome.com/c939d0e917.js"></script>
+	<!-- <script src="https://kit.fontawesome.com/c939d0e917.js"></script> -->
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<link
