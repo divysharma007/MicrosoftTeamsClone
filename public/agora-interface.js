@@ -172,8 +172,10 @@ function createCameraStream(uid) {
 		screen: false,
 	});
 	localStream.setVideoProfile(cameraVideoProfile);
+
 	localStream.init(
 		function () {
+	
 			console.log("getUserMedia successfully");
 				
 			// TODO: add check for other streams. play local stream full size if alone in channel
@@ -192,9 +194,16 @@ function createCameraStream(uid) {
 			localStreams.camera.stream = localStream; // keep track of the camera stream for later
 		},
 		function (err) {
+			document.getElementById("video-icon").innerHTML = "videocam_off";
+			document.getElementById("video-btn").classList.toggle("btn-danger");
+			document.getElementById("mic-icon").innerHTML = "mic_off";
+			document.getElementById("mic-btn").classList.toggle("btn-danger");
+			document.getElementById("screen-share-icon").innerHTML = "cancel_presentation";
+		    document.getElementById("screen-share-btn").classList.toggle("btn-danger");
 			console.log("[ERROR] : getUserMedia failed", err);
 		}
 	);
+
 }
 
 // SCREEN SHARING
@@ -404,3 +413,7 @@ const shower = (mes) => {
 	div.setAttribute("align", "left");
 	messages.appendChild(div);
 };
+
+const redir = () => {
+	document.location.href = "../";
+}
