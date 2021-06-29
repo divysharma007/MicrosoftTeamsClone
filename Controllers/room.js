@@ -48,8 +48,7 @@ router.get("/:id/video/:video", async (req, res) => {
 					channelName: builders.channelName,
 					token: builders.token,
 					screentoken: builders.screentoken,
-					screenuid: builders.screenuid,
-					username:req.session.userdata.displayName
+					screenuid: builders.screenuid
 				});
 		} else {
 			res.send("not Authorized");
@@ -58,7 +57,9 @@ router.get("/:id/video/:video", async (req, res) => {
 });
 
 router.get("/:id/", async (req, res) => {
-	single_room = await room.findById(req.params.id);
+	single_room = await room.findById(req.params.id).populate('messages');
+	// var messages = single_room.messages;
+	// console.log(messages);
 	
     const user = await User.findOne({
 				mail: req.session.userdata.userPrincipalName,

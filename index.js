@@ -7,6 +7,8 @@ const roomrouter = require("./Controllers/room");
 const io = require("socket.io")(server);
 const bodyParser = require("body-parser");
 const session = require("express-session");
+const Message = require("./models/Message.js");
+const room = require("./models/Room.js");
 const mongodbStore = require("connect-mongodb-session")(session);
 var path = require("path");
 app.set("view engine", "ejs");
@@ -25,49 +27,49 @@ app.use(
 		secret: "my secret",
 		resave: "false",
 		saveUninitialized: "false",
-		store: store
+		store: store,
 	})
 );
-store.on("error", function (error) {
+app.use((req, res, next) => {
+	if(req.session.userdata)
+	res.locals.username = req.session.userdata.displayName;
+	next();
+});
+store.on("error", function (error, res) {
 	res.send(error);
 });
 const con = mongoose.connection;
 
-
-con.on("open", () => {	
+con.on("open", () => {
 	console.log("connected...");
 	server.listen(process.env.PORT || 3000, () => {
 		console.log("listening on 3000");
 	});
 });
 
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/", authrouter);
 
 app.use((req, res, next) => {
-	
-	if(!req.session.logged)req.session.logged=false
-	console.log(req.session.logged,req.url);
+	if (!req.session.logged) req.session.logged = false;
+	console.log(req.session.logged, req.url);
 	if (!req.session.logged) {
-		res.redirect('/');
-	}
-	else {
-       
+		res.redirect("/");
+	} else {
 		next();
 	}
-})
+});
 app.use("/room", roomrouter);
 app.use("/logout", (req, res) => {
-    req.session.destroy();
+	req.session.destroy();
 	res.send("logged out");
 });
 
 io.on("connection", (socket) => {
 	console.log("socket connected ");
 	socket.on("join-chat-room", (roomid) => {
-		console.log(roomid)
+		console.log(roomid);
 		socket.join(roomid);
 		console.log(socket.id, roomid);
 
@@ -76,31 +78,53 @@ io.on("connection", (socket) => {
 			socket.broadcast.to(roomid).emit("message", message);
 			console.log("message received and broadcasted");
 		});
-		socket.on("videouser", (user) => {
-				socket.broadcast.to(roomid).emit("videouser", user);
-				console.log(`${user} received and broadcasted`);
-		})
 	});
-	socket.on("join-room", (roomId, userId) => {
-		socket.join(roomId);
-		socket.on("gotpermission", () => {
-			socket.broadcast.to(roomId).emit("user-connected", userId);
-		});
+	socket.on("join-group", (GroupId) => {
+		socket.join(GroupId);
 
-		socket.on("share-screen", (peerid) => {
-			console.log(peerid);
-            socket.broadcast.to(roomId).emit("share-screen", peerid);
-		
-			console.log("screen broadcasted");
-		});
+		socket.on("message", async (username, message) => {
+			var timestr = timestring(new Date());
+			console.log(timestr);
+			var single_room = await room.findById(GroupId);
+			const newmessage = new Message({
+				name: username,
+				content: message,
+				date: timestr,
+			});
+			await newmessage.save();
 
-		socket.on("message", (message) => {
-			socket.broadcast.to(roomId).emit("message", message);
+			console.log(single_room, newmessage.id);
+			single_room.messages.push(newmessage.id);
+			await single_room.save();
+			console.log(socket.id, GroupId, message);
+			socket.broadcast.to(GroupId).emit("message", username, message, timestr);
 			console.log("message received and broadcasted");
 		});
+
 		socket.on("disconnect", () => {
-			socket.broadcast.to(roomId).emit("user-disconnected", userId);
+			socket.broadcast.to(GroupId).emit("user-disconnected", GroupId);
 		});
 	});
 });
+function timestring(date) {
+	var hours = date.getHours();
+	var minutes = date.getMinutes();
+	var ampm = hours >= 12 ? "pm" : "am";
+	hours = hours % 12;
+	hours = hours ? hours : 12; // the hour '0' should be '12'
+	minutes = minutes < 10 ? "0" + minutes : minutes;
+	var time =
+		String(date.getDate()) +
+		"/" +
+		String(date.getMonth()) +
+		"/" +
+		String(date.getFullYear()) +
+		", " +
+		hours +
+		":" +
+		minutes +
+		" " +
+		ampm;
 
+	return time;
+}

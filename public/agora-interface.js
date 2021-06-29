@@ -50,7 +50,7 @@ initClientAndJoinChannel();
 
 client.on("stream-published", function (evt) {
 	// addRemoteStreamMiniView(evt.stream)
-    socket.emit("videouser", username);
+  
 	console.log("Publish local stream successfully");
 });
 
@@ -73,9 +73,7 @@ client.on("stream-added", function (evt) {
 		// });
 });
 
-socket.on("videouser", (user) => {
-		console.log(user);
-	});
+
 client.on("stream-subscribed", function (evt) {
 	var remoteStream = evt.stream;
 	var remoteId = remoteStream.getId();
@@ -188,7 +186,7 @@ function createCameraStream(uid) {
 				// socket.emit('user-name',req.session.userdata.displayNa)
 				console.log("[ERROR] : publish local stream error: " + err);
 			});
-			 socket.emit('videouser',username)
+			 
 
 			enableUiControls(localStream); // move after testing
 			localStreams.camera.stream = localStream; // keep track of the camera stream for later
