@@ -1,60 +1,138 @@
-const socket = io("/");
-console.log('working socet')
-socket.emit("join-group", ROOM_ID);
-const chat = document.getElementById("chat_input_field");
-const messages = document.getElementById("chat-show");
-socket.on("message", (username,mes,timestr) => {
-	shower(username,mes,timestr);
+console.log(ROOM_ID);
+const url = `/api/room/${ROOM_ID}`;
+console.log(url, ROOM_ID);
+const info = async (url) => {
+	return await axios.get(url);
+};
+const room = info(url);
+room.then((data) => {
+	console.log(data.data.messages);
+	// console.log(room.data)
+	data.data.messages.map((mes) => {
+		message(mes.name, mes.content, mes.date);
+	});
 });
-const message = (username) => {
-	// console.log(11)
-	// console.log(username)
-	// console.log(timestr);
+
+var socket;
+var text = {
+	text: "",
+};
+const messages = document.getElementById("chat-show");
+var stringToHTML = function (str) {
+	var parser = new DOMParser();
+	str = String(str);
+
+	var doc = parser.parseFromString(str, "text/html");
+	console.log(123, doc.body.innerHTML);
+
+	return doc.body.innerHTML;
+};
+function setup() {
+	socket = io.connect("http://localhost:3000");
+	socket.emit("join-group", ROOM_ID);
+
+	$("#text").froalaEditor({
+		toolbarButtons: [
+			"fullscreen",
+			"bold",
+			"italic",
+			"underline",
+			"strikeThrough",
+			"subscript",
+			"superscript",
+			"|",
+			"fontFamily",
+			"fontSize",
+			"color",
+			"inlineStyle",
+			"paragraphStyle",
+			"|",
+			"paragraphFormat",
+			"align",
+			"formatOL",
+			"formatUL",
+			"outdent",
+			"indent",
+			"quote",
+			"-",
+			"insertLink",
+			"insertImage",
+			"insertVideo",
+			"insertFile",
+			"insertTable",
+			"|",
+			"emoticons",
+			"specialCharacters",
+			"insertHR",
+			"selectAll",
+			"clearFormatting",
+			"|",
+			"print",
+			"help",
+			"html",
+			"|",
+			"undo",
+			"redo",
+		],
+	});
+
+	socket.on("message", message);
+
+	document.getElementById("defaultCanvas0").style.display = "none";
+	var x = document.getElementById("chat_input_field");
+	console.log(x);
+	x.classList.remove("input-group");
+}
+
+const message = (username, text, timestr) => {
 	card = document.createElement("div");
 	card.className = "card";
-	card.style.marginBottom="0.5%"
+	card.style.marginBottom = "0.5%";
 	cardbody = document.createElement("div");
 	cardbody.className = "card-body";
 	cardtitle = document.createElement("h5");
 	cardtitle.className = "card-title";
-	cardtitle.innerHTML=username
+	cardtitle.innerHTML = username;
 	cardsubtitle = document.createElement("h6");
 	cardsubtitle.className = "card-subtitle mb-2 text-muted";
-	cardsubtitle.innerHTML = timestring(new Date())
-	cardtext = document.createElement("p");
-	cardtext.className = "card-text";
-	cardtext.innerHTML = chat.value;
-	cardbody.appendChild(cardtitle)
+	cardsubtitle.innerHTML = timestr;
+	cardtext = document.createElement("div");
+	console.log(text);
+	cardtext.innerHTML = stringToHTML(text);
+
+	cardbody.appendChild(cardtitle);
 	cardbody.appendChild(cardsubtitle);
 	cardbody.appendChild(cardtext);
-	card.appendChild(cardbody)
-	messages.append(card)
-	socket.emit("message", username,chat.value);
+	card.appendChild(cardbody);
+	messages.append(card);
 };
-const shower = (username,mes,timestr) => {
-		// console.log(11);
-		// console.log(username);
-	    // console.log(timestr);
-		card = document.createElement("div");
-		card.className = "card";
-		card.style.marginBottom = "0.5%";
-		cardbody = document.createElement("div");
-		cardbody.className = "card-body";
-		cardtitle = document.createElement("h5");
-		cardtitle.className = "card-title";
-		cardtitle.innerHTML = username;
-		cardsubtitle = document.createElement("h6");
-		cardsubtitle.className = "card-subtitle mb-2 text-muted";
-		cardsubtitle.innerHTML =timestr;
-		cardtext = document.createElement("p");
-		cardtext.className = "card-text";
-		cardtext.innerHTML =mes;
-		cardbody.appendChild(cardtitle);
-		cardbody.appendChild(cardsubtitle);
-		cardbody.appendChild(cardtext);
-		card.appendChild(cardbody);
-		messages.append(card);
+const shower = () => {
+	var html = $("#text").froalaEditor("html.get");
+	var data = {
+		text: html,
+	};
 
+	socket.emit("message", username, data.text);
+
+	card = document.createElement("div");
+	card.className = "card";
+	card.style.marginBottom = "0.5%";
+	cardbody = document.createElement("div");
+	cardbody.className = "card-body";
+	cardtitle = document.createElement("h5");
+	cardtitle.className = "card-title";
+	cardtitle.innerHTML = username;
+	cardsubtitle = document.createElement("h6");
+	cardsubtitle.className = "card-subtitle mb-2 text-muted";
+	cardsubtitle.innerHTML = timestring(new Date());
+	cardtext = document.createElement("div");
+
+	cardtext.innerHTML = data.text;
+	cardbody.appendChild(cardtitle);
+	cardbody.appendChild(cardsubtitle);
+	cardbody.appendChild(cardtext);
+	card.appendChild(cardbody);
+	messages.append(card);
 };
 function timestring(date) {
 	var hours = date.getHours();
@@ -78,4 +156,3 @@ function timestring(date) {
 
 	return time;
 }
-

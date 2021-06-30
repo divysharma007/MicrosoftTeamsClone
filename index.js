@@ -31,8 +31,8 @@ app.use(
 	})
 );
 app.use((req, res, next) => {
-	if(req.session.userdata)
-	res.locals.username = req.session.userdata.displayName;
+	if (req.session.userdata)
+		res.locals.username = req.session.userdata.displayName;
 	next();
 });
 store.on("error", function (error, res) {
@@ -46,7 +46,11 @@ con.on("open", () => {
 		console.log("listening on 3000");
 	});
 });
+app.get('/api/room/:id', async (req, res) => {
 
+	single_room = await room.findById(req.params.id).populate("messages");
+	res.json(single_room)
+})
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/", authrouter);
@@ -65,9 +69,11 @@ app.use("/logout", (req, res) => {
 	req.session.destroy();
 	res.send("logged out");
 });
+var text = {
+	text: "",
+};
 
 io.on("connection", (socket) => {
-	console.log("socket connected ");
 	socket.on("join-chat-room", (roomid) => {
 		console.log(roomid);
 		socket.join(roomid);
@@ -75,29 +81,29 @@ io.on("connection", (socket) => {
 
 		socket.on("message", (message) => {
 			console.log(socket.id, roomid, message);
-			socket.broadcast.to(roomid).emit("message", message);
+			socket.broadcast.to(roomid).emit("text", message);
 			console.log("message received and broadcasted");
 		});
 	});
 	socket.on("join-group", (GroupId) => {
 		socket.join(GroupId);
 
-		socket.on("message", async (username, message) => {
+	
+		socket.on("message", async (username, data) => {
+			console.log(data);
 			var timestr = timestring(new Date());
-			console.log(timestr);
+			text.text = data;
+			io.sockets.emit("text", data);
 			var single_room = await room.findById(GroupId);
 			const newmessage = new Message({
 				name: username,
-				content: message,
+				content: text.text,
 				date: timestr,
 			});
 			await newmessage.save();
-
-			console.log(single_room, newmessage.id);
 			single_room.messages.push(newmessage.id);
 			await single_room.save();
-			console.log(socket.id, GroupId, message);
-			socket.broadcast.to(GroupId).emit("message", username, message, timestr);
+			socket.broadcast.to(GroupId).emit("message", username, text.text, timestr);
 			console.log("message received and broadcasted");
 		});
 
@@ -128,3 +134,4 @@ function timestring(date) {
 
 	return time;
 }
+

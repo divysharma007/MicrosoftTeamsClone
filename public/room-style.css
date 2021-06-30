@@ -63,7 +63,7 @@ text-align:right;
 .chat-window{
     box-sizing: border-box;
     height:93%;
-    border:3px black solid;
+
 	display: flex;
     flex-direction: column;  
 }
@@ -84,7 +84,11 @@ text-align:right;
 }
 #chat_input_field{
    
-    width:50%;
+    width:100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+   
 
 }
 .message{
@@ -137,6 +141,9 @@ width:100%;
     width: 100%;
 
 }
-
+#submit_button{
+     margin-left: 2%;
+    height:20%;
+}
 
 
