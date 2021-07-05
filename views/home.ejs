@@ -4,13 +4,144 @@
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Document</title>
-	</head>
-	<body>
-		<%console.log(1)%> <%rooms.map( (room) =>{%>
-		<h1><a href="./<%=room.id%>/"><%=room.name %></a></h1>
+		<title>Meteor Teams</title>
+		
+		<script src="/socket.io/socket.io.js" defer></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>	
+		<link rel="stylesheet" href="/homepage.css" />
 
-		<h3><%=room.id %></h3>
-		<% })%>
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"
+			integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w=="
+			crossorigin="anonymous"
+			referrerpolicy="no-referrer"
+		/>
+		<link
+			rel="stylesheet"
+			href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+			integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+			crossorigin="anonymous"
+		/>
+		<script
+			src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+			integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+			crossorigin="anonymous"
+		></script>
+		<script
+			src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+			integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+			crossorigin="anonymous"
+		></script>
+		<script
+			src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+			integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+			crossorigin="anonymous"
+		></script>
+	<style> body {padding: 0; margin: 0;} </style>
+  
+	<link rel="stylesheet" href="/main.css"/>
+    <script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.min.css"><link href="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.6.0/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" /><link href="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.6.0/css/froala_style.min.css" rel="stylesheet" type="text/css" /></head>
+<script type="text/javascript">
+	const username= "<%= username %>"
+	</script>
+		<link
+			href="https://fonts.googleapis.com/icon?family=Material+Icons"
+			rel="stylesheet"
+		/>
+		
+
+		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+</head>
+
+<body >
+		<nav
+			class="navbar navbar-expand-lg navbar-dark"
+			style="background-color: #464775"
+		>
+			<button
+				class="navbar-toggler"
+				type="button"
+				data-toggle="collapse"
+				data-target="#navbarTogglerDemo03"
+				aria-controls="navbarTogglerDemo03"
+				aria-expanded="false"
+				aria-label="Toggle navigation"
+			>
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<a class="navbar-brand" href="/room/">Meteor Teams</a>
+
+			<div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+				<ul class="navbar-nav mr-auto mt-2 mt-lg-0" style="width: 80%; justify-content: center;">
+					<li class="nav-item active" class="nav-item active" style="width: 60%;margin-right: 2%">
+						<input
+						    id="searchbar"
+							class="form-control"
+							placeholder="&#xf002; Search"
+							style="font-family: 'Font Awesome 5 Free';font-weight: 600"
+						/>
+					</li>
+					
+				</ul>
+				<form class="form-inline my-2 my-lg-0" style="width: 20%;">
+					<ul
+						class="navbar-nav mr-auto mt-2 mt-lg-0"
+						style="width:100%;justify-content:flex-end;"
+
+						
+					><div class="dropdown">
+						<li>
+							<%= username %>
+					
+						</li>
+							<div class="dropdown-content">
+							<a  href="/profile/"  >Profile</a>
+							<a href="https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri=http://localhost:3000/logout"  >Signout</a>
+						</div>
+						</div>
+					
+					</ul>
+				</form>
+					
+			</div>
+		</nav>
+	
+		<div class="maincontainer">
+		<div class="option-window">
+    
+	<span onclick="link()" style="font-size:35px;cursor: pointer;color:white;"class="material-icons">video_call</span>
+	<p>Start Live Meet</p>
+	
+		</div>
+
+		<div class="grp-window">
+<div class="grp-window-header">
+	<div  class="teams"><strong>Teams</strong></div>
+	<div class="join-create">
+		<a href="/room/create" style="display:flex;width:160px;justify-content: space-evenly;"><span class="material-icons">group_add</span>Create teams</a>
+	</div>
+</div>
+
+			<div style="width:80% ;height:90%;display:flex;flex-direction:column;margin-left:10%;margin-right:10%;margin-top:2%;">
+			<div id="grp-show">
+			
+			</div>
+				
+			</div>
+	
+
+
+
+		</div>
+		</div>
+		
+					
+  	  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/mode/xml/xml.min.js"></script>
+<script src="/homepage.js" defer></script>
 	</body>
 </html>

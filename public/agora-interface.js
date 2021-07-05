@@ -7,6 +7,7 @@
 var cameraVideoProfile = "480P_4"; // 640 × 480 @ 30fps  & 750kbs
 var screenVideoProfile = "480P_4"; // 640 × 480 @ 30fps
 const socket = io("/");
+
 // create client instances for camera (client) and screen share (screenClient)
 var client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
 var screenClient;
@@ -120,29 +121,29 @@ client.on("peer-leave", function (evt) {
 });
 
 // show mute icon whenever a remote has muted their mic
-client.on("mute-audio", function (evt) {
-	document.getElementById(evt.uid + "_mute").style.backgroundColor = "#cc3833";
-	toggleVisibility("#" + evt.uid + "_mute", true);
-});
+// client.on("mute-audio", function (evt) {
+// 	document.getElementById(evt.uid + "_mute").style.backgroundColor = "#cc3833";
+// 	toggleVisibility("#" + evt.uid + "_mute", true);
+// });
 
-client.on("unmute-audio", function (evt) {
-	toggleVisibility("#" + evt.uid + "_mute", false);
-});
+// client.on("unmute-audio", function (evt) {
+// 	toggleVisibility("#" + evt.uid + "_mute", false);
+// });
 
-// show user icon whenever a remote has disabled their video
-client.on("mute-video", function (evt) {
-	var remoteId = evt.uid;
+// // show user icon whenever a remote has disabled their video
+// client.on("mute-video", function (evt) {
+// 	var remoteId = evt.uid;
 	
-	// if the main user stops their video select a random user from the list
-	if (remoteId != mainStreamId) {
-		// if not the main vidiel then show the user icon
-		toggleVisibility("#" + remoteId + "_no-video", true);
-	}
-});
+// 	// if the main user stops their video select a random user from the list
+// 	if (remoteId != mainStreamId) {
+// 		// if not the main vidiel then show the user icon
+// 		toggleVisibility("#" + remoteId + "_no-video", true);
+// 	}
+// });
 
-client.on("unmute-video", function (evt) {
-	toggleVisibility("#" + evt.uid + "_no-video", false);
-});
+// client.on("unmute-video", function (evt) {
+// 	toggleVisibility("#" + evt.uid + "_no-video", false);
+// });
 
 // join a channel
 function joinChannel(channelName, uid, token) {
@@ -299,9 +300,11 @@ function stopScreenShare() {
 	$("#video-btn").prop("disabled", false);
 	screenClient.leave(
 		function () {
+	
 			screenShareActive = false;
 			console.log("screen client leaves channel");
 			$("#screen-share-btn").prop("disabled", false); // enable button
+			localStreams.screen.stream.stop()
 			screenClient.unpublish(localStreams.screen.stream); // unpublish the screen client
 			localStreams.screen.stream.close(); // close the screen client stream
 			localStreams.screen.id = ""; // reset the screen id
@@ -380,6 +383,7 @@ function leaveChannel() {
 			// show the modal overlay to join
 			// $("#modalForm").modal("show");
 			Dish();
+			redir();
 		},
 		function (err) {
 			console.log("client leave failed ", err); //error handling
@@ -390,7 +394,7 @@ function leaveChannel() {
 const messages = document.getElementById("main__chat__window");
 const chat_inbox = document.getElementById("chat_message");
 socket.on("message", (mes) => {
-  console.log(mes, "wfwffwfwfwffwfww")
+//   console.log(mes, "wfwffwfwfwffwfww")
 	shower(mes);
 });
 const message = () => {

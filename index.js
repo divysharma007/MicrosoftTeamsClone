@@ -2,14 +2,17 @@ const express = require("express");
 const app = express();
 const server = require("http").Server(app);
 const authrouter = require("./Controllers/authentication.js");
+const apirouter = require("./Controllers/api.js");
 const mongoose = require("mongoose");
 const roomrouter = require("./Controllers/room");
 const io = require("socket.io")(server);
 const bodyParser = require("body-parser");
 const session = require("express-session");
 const Message = require("./models/Message.js");
-const room = require("./models/Room.js");
+const channel = require("./models/Channel.js");
+const User = require("./models/User.js");
 const mongodbStore = require("connect-mongodb-session")(session);
+const morgan = require("mongoose-morgan");
 var path = require("path");
 app.set("view engine", "ejs");
 
@@ -30,13 +33,18 @@ app.use(
 		store: store,
 	})
 );
+app.use(
+	morgan({
+		connectionString: dburi,
+	}, {},'short')
+);
 app.use((req, res, next) => {
 	if (req.session.userdata)
 		res.locals.username = req.session.userdata.displayName;
 	next();
 });
-store.on("error", function (error, res) {
-	res.send(error);
+store.on("error", function (error) {
+	console.log(error);
 });
 const con = mongoose.connection;
 
@@ -46,11 +54,7 @@ con.on("open", () => {
 		console.log("listening on 3000");
 	});
 });
-app.get('/api/room/:id', async (req, res) => {
 
-	single_room = await room.findById(req.params.id).populate("messages");
-	res.json(single_room)
-})
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/", authrouter);
@@ -58,20 +62,28 @@ app.use("/", authrouter);
 app.use((req, res, next) => {
 	if (!req.session.logged) req.session.logged = false;
 	console.log(req.session.logged, req.url);
-	if (!req.session.logged) {
+	if (!req.session.logged || !req.session.userdata) {
 		res.redirect("/");
 	} else {
 		next();
 	}
 });
+
+
+
+
 app.use("/room", roomrouter);
+app.use("/api", apirouter);
 app.use("/logout", (req, res) => {
 	req.session.destroy();
-	res.send("logged out");
+	res.redirect("/");
 });
-var text = {
-	text: "",
-};
+app.use("/profile/", async (req, res) => {
+	const user = await User.findOne({
+		mail: req.session.userdata.userPrincipalName,
+	}).populate("rooms");
+	res.render("profile",{user:user})
+})
 
 io.on("connection", (socket) => {
 	socket.on("join-chat-room", (roomid) => {
@@ -81,57 +93,36 @@ io.on("connection", (socket) => {
 
 		socket.on("message", (message) => {
 			console.log(socket.id, roomid, message);
-			socket.broadcast.to(roomid).emit("text", message);
+			socket.broadcast.to(roomid).emit("message", message);
 			console.log("message received and broadcasted");
 		});
 	});
 	socket.on("join-group", (GroupId) => {
 		socket.join(GroupId);
-
+		
+		
+		socket.on("message", async (username, data,timestr,type) => {
+			text = data;
 	
-		socket.on("message", async (username, data) => {
-			console.log(data);
-			var timestr = timestring(new Date());
-			text.text = data;
-			io.sockets.emit("text", data);
-			var single_room = await room.findById(GroupId);
+			var single_channel = await channel.findById(GroupId);
 			const newmessage = new Message({
 				name: username,
-				content: text.text,
+				content:text,
 				date: timestr,
+				type:type
 			});
 			await newmessage.save();
-			single_room.messages.push(newmessage.id);
-			await single_room.save();
-			socket.broadcast.to(GroupId).emit("message", username, text.text, timestr);
+			single_channel.messages.push(newmessage.id);
+			await single_channel.save();
+			socket.broadcast.to(GroupId).emit("message", username, text, timestr,type);
 			console.log("message received and broadcasted");
 		});
 
 		socket.on("disconnect", () => {
+		
+			
 			socket.broadcast.to(GroupId).emit("user-disconnected", GroupId);
 		});
 	});
 });
-function timestring(date) {
-	var hours = date.getHours();
-	var minutes = date.getMinutes();
-	var ampm = hours >= 12 ? "pm" : "am";
-	hours = hours % 12;
-	hours = hours ? hours : 12; // the hour '0' should be '12'
-	minutes = minutes < 10 ? "0" + minutes : minutes;
-	var time =
-		String(date.getDate()) +
-		"/" +
-		String(date.getMonth()) +
-		"/" +
-		String(date.getFullYear()) +
-		", " +
-		hours +
-		":" +
-		minutes +
-		" " +
-		ampm;
-
-	return time;
-}
 

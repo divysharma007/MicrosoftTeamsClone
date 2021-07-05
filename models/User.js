@@ -9,6 +9,7 @@ const UserSchema = new mongoose.Schema({
 		required: true,
 	},
 	rooms: [{ type: mongoose.Schema.Types.ObjectID, ref: "room" }],
+
 });
 
 const UserModel = mongoose.model('user', UserSchema);

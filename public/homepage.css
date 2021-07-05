@@ -4,20 +4,9 @@
 }
 body {
 	height: 100vh;
+	overflow: hidden;
 }
-.header {
-	display: flex;
-	align-items: center;
-	font-size: 3vmin;
-	height: 7%;
-	background-color: #464775;
-}
-.control-input {
-	width: 60%;
-	height: 100%;
-	display: flex;
-	align-items: center;
-}
+
 #searchbar {
 	background-color: rgba(255, 255, 255, 0.8);
 	width: 100%;
@@ -28,61 +17,34 @@ body {
 #searchbar:focus {
 	background-color: #f5f5f5;
 }
-.placeicon {
-	font-family: "Font Awesome 5 Free";
-	font-weight: 600;
-}
-.title {
-	padding-left: 5%;
-	color: whitesmoke;
-}
 
-.profile {
-	text-align: right;
-	width: 17%;
-}
-.title {
-	width: 23%;
-}
 .maincontainer {
 	box-sizing: border-box;
-	height: 92%;
+	height: 93%;
 	width: 100%;
 	display: flex;
 }
-.chat-window {
+.grp-window {
 	box-sizing: border-box;
 	height: 100%;
-	width: 80%;
+	width: 95%;
 	display: flex;
 	flex-direction: column;
+		background-color: #f4f4f4;
 }
-.channel-window {
-	width: 20%;
+.option-window {
+	width: 5%;
 	display: flex;
 	flex-direction: column;
-	background-color: #f4f4f4;
-}
-#chat-show {
-	box-sizing: border-box;
-	height: 70%;
-	width: 100%;
-
-	margin: auto;
-	display: flex;
-	flex-direction: column;
-	overflow: auto;
-}
-.chat-input {
-	display: flex;
-	justify-content: center;
+	background-color: #33344a
 }
 
-#chat-show::-webkit-scrollbar {
+
+#grp-show::-webkit-scrollbar {
 	width: 10px; /* width of the entire scrollbar */
 }
 
-#chat-show::-webkit-scrollbar-thumb {
+#grp-show::-webkit-scrollbar-thumb {
 	background-color: #f4f4f4; /* color of the scroll thumb */
 	border-radius: 20px; /* roundness of the scroll thumb */
 	border: 3px solid; /* creates padding around scroll thumb */
@@ -91,6 +53,7 @@ a:link,
 a:visited {
 	background-color: transparent;
 	color: black;
+	  
 
 }
 li {
@@ -117,18 +80,20 @@ li {
 	color: black;
 	background-color: #ddd;
 }
-.channel  a:hover {
-     display: inline-block;
-     text-align: left;
-    width: 100%;
-	text-decoration: none;
-	color: black;
-	background-color: darkgray;
-}
+
 
 .dropdown:hover .dropdown-content {
 	display: flex;
 	flex-direction: column;
+}
+.grpcard {
+
+max-width: 100%;
+
+}
+.grpcard:hover {
+  text-decoration: none; 
+  color: black;
 }
 .grp {
   text-align: center;
@@ -147,11 +112,26 @@ li {
   background-color:lightcoral;
 }
 
+#grp-show {
+display:grid;
+
+  grid-template-columns: 1fr 1fr 1fr; 
+  row-gap: 10px;
+  gap:15px;
+  overflow:auto;
+  
+}
+.teams{
+	width:fit-content;
+	height:fit-content;
+	padding-left:2%;
+	align-self: center;
+}
 .grp-window-header{
 	display:flex;
 	justify-content: space-between;
-	margin-top: 1%;}
-/* }
+	margin-top: 1%;
+}
 .join-create{
 	display:flex;
 	width:fit-content;
@@ -174,4 +154,4 @@ li {
 		border: 1px solid ;
 		border-color: #e1dfdd;
 	
-} */
+}

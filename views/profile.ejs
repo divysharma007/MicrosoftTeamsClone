@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Profile</title>
+		
+		<script src="/socket.io/socket.io.js" defer></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		
+		<link rel="stylesheet" href="/room-style.css" />
+
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"
+			integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w=="
+			crossorigin="anonymous"
+			referrerpolicy="no-referrer"
+		/>
+		<link
+			rel="stylesheet"
+			href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+			integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+			crossorigin="anonymous"
+		/>
+		<script
+			src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+			integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+			crossorigin="anonymous"
+		></script>
+		<script
+			src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+			integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+			crossorigin="anonymous"
+		></script>
+		<script
+			src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+			integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+			crossorigin="anonymous"
+		></script>
+	<style> body {padding: 0; margin: 0;} </style>
+	<link rel="stylesheet" href="/profile.css"/>
+	<link rel="stylesheet" href="/main.css"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript">
+	const username= "<%= username %>"
+	</script>
+</head>
+
+<body >
+		<nav
+			class="navbar navbar-expand-lg navbar-dark"
+			style="background-color: #464775"
+		>
+			<button
+				class="navbar-toggler"
+				type="button"
+				data-toggle="collapse"
+				data-target="#navbarTogglerDemo03"
+				aria-controls="navbarTogglerDemo03"
+				aria-expanded="false"
+				aria-label="Toggle navigation"
+			>
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<a class="navbar-brand" href="/room/">Meteor Teams</a>
+
+			<div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+				<ul class="navbar-nav mr-auto mt-2 mt-lg-0" style="width: 80%; justify-content: center">
+				
+				</ul>
+				<form class="form-inline my-2 my-lg-0" style="width: 20%;">
+					<ul
+						class="navbar-nav mr-auto mt-2 mt-lg-0"
+						style="width:100%;justify-content:flex-end;"
+
+						
+					>
+					<div class="dropdown">
+						<li>
+							<%= username %>
+					
+						</li>
+							<div class="dropdown-content">
+							<a  href="/profile/"  >Profile</a>
+							<a href="/logout"  >Signout</a>
+						</div>
+						</div>
+					</ul>
+				</form>
+			</div>
+		</nav>
+	
+		<div class="maincontainer">
+			<div id="chat-show">
+			<div class="card-body">
+				<div class="row">
+					<div class="col-sm-3">
+						<h6 class="mb-0">Full Name</h6></div>
+						<div class="col-sm-9 text-secondary"> <%=user.username%></div></div><hr>
+						<div class="row">
+							<div class="col-sm-3">
+								<h6 class="mb-0">Email</h6>
+							</div><div class="col-sm-9 text-secondary"> <%=user.mail%></div>
+						</div><hr><div class="row">
+							<div class="col-sm-3">
+								<h6 class="mb-0">Id</h6>
+							</div><div class="col-sm-9 text-secondary"><%=user._id%></div>
+							
+						</div><hr>
+						<div class="row" style="display: flex; flex-direction:column">
+							<div class="col-sm-3" ><h6 class="mb-0">Teams</h6></div>
+								
+							<% user.rooms.map((room) =>{%>
+						
+							<div class="text-secondary" style="text-align:center;"><%=room.name%></div>
+							<%})%>
+						</div>
+			</div>
+				
+		
+
+	
+
+		</div>
+	</body>
+</html>

@@ -12,6 +12,10 @@ const MessageSchema = new mongoose.Schema({
 		type: String,
 	
 	},
+	type: {
+		type: String,
+		required: true,
+	}
 });
 
 const MessageModel = mongoose.model("message", MessageSchema);

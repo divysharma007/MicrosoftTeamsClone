@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const RoomSchema = new mongoose.Schema({
+const ChannelSchema = new mongoose.Schema({
 	name: {
 		type: String,
 		required: true,
@@ -10,8 +10,7 @@ const RoomSchema = new mongoose.Schema({
 	},
 	users: [{ type: mongoose.Schema.Types.ObjectID, ref: "user" }],
 	messages: [{ type: mongoose.Schema.Types.ObjectID, ref: "message" }],
-	channels: [{ type: mongoose.Schema.Types.ObjectID, ref: "channel" }],
 });
-const RoomModel = mongoose.model("room", RoomSchema);
+const ChannelModel = mongoose.model("channel", ChannelSchema);
 
-module.exports = RoomModel;
+module.exports = ChannelModel;

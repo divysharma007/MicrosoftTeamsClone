@@ -3,14 +3,14 @@ const msal = require("@azure/msal-node");
 const axios = require("axios");
 const User = require("../models/User");
 
-let accesstoken;
+var accesstoken;
 const config = {
 	auth: {
 		clientId: "593d89bc-523b-4e46-9d9c-f97753ac8ae9",
 		authority: "https://login.microsoftonline.com/common",
 		clientSecret: "D~6Pp~38Y6yPb1w.2X_Ltnw~YN-OA27xw7",
-		postlogoutRedirectUri: "http://localhost:3000/logout",
-	},
+		postlogoutRedirectUri: "https://localhost:3000/logout",
+	},	
 	system: {
 		loggerOptions: {
 			loggerCallback(loglevel, message, containsPii) {},
@@ -47,6 +47,9 @@ router.get("/redirect", (req, res) => {
 		.acquireTokenByCode(tokenRequest)
 		.then((response) => {
 			var user_details = response;
+			console.log(response.accessToken);
+		
+			req.session.accesstoken = response.accessToken;
 			accesstoken = response.accessToken;
 			res.redirect("/data");
 		})
@@ -57,6 +60,7 @@ router.get("/redirect", (req, res) => {
 });
 
 router.get("/data", (req, res) => {
+	console.log(`Bearer ${req.session.accesstoken}`);
 	const response = axios("https://graph.microsoft.com/v1.0/me", {
 		method: "GET",
 		headers: { Authorization: `Bearer ${accesstoken}` },
@@ -64,8 +68,7 @@ router.get("/data", (req, res) => {
 		.then(async (data) => {
 			req.session.userdata = data.data;
 
-			// console.log(req.session.userdata.displayName)
-			// console.log(accesstoken,data.data)
+			// console.log(req.session.userdata.displayName
 			user = await User.findOne({ mail: data.data.userPrincipalName });
 			console.log(user, data.data.displayName, data.data.mail);
 			if (!user) {
@@ -78,7 +81,7 @@ router.get("/data", (req, res) => {
 			res.redirect("/room/");
 		})
 		.catch((err) => {
-			res.send("Error : Unauthorized");
+			res.send("Error : Unauthorized " +err );
 		});
 });
 
