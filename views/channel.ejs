@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title><%=channel.name%> (<%=room.name %>) | Meteor Teams</title>
+		<script>
+			const ROOM_ID = "<%=room.id %>";
+			const CHANNEL_ID = "<%=channel.id %>";
+			const channeln="<%=channel.name %>"
+			const mail="<%=mail%>"
+		   
+          
+		</script>
+		<script src="/socket.io/socket.io.js" defer></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>	
+		<link rel="stylesheet" href="/room-style.css" />
+		<link rel="shortcut icon" type="image/png" href="/favicon.png">
+
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"
+			integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w=="
+			crossorigin="anonymous"
+			referrerpolicy="no-referrer"
+		/>
+		<link
+			rel="stylesheet"
+			href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+			integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+			crossorigin="anonymous"
+		/>
+		<script
+			src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+			integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+			crossorigin="anonymous"
+		></script>
+		<script
+			src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+			integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+			crossorigin="anonymous"
+		></script>
+		<script
+			src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+			integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+			crossorigin="anonymous"
+		></script>
+	<style> body {padding: 0; margin: 0;} </style>
+    <script src="/p5/p5.min.js"></script>
+    <script src="/p5/addons/p5.dom.min.js"></script>
+    <script src="/p5/addons/p5.sound.min.js"></script>
+    <script src="/socket.io/socket.io.js" defer></script>
+	<link rel="stylesheet" href="/main.css"/>
+    <script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.min.css">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.6.0/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.6.0/css/froala_style.min.css" rel="stylesheet" type="text/css" />
+	
+</head>
+<script type="text/javascript">
+	const username= "<%= username %>"
+	</script>
+		<link
+			href="https://fonts.googleapis.com/icon?family=Material+Icons"
+			rel="stylesheet"
+		/>
+		<link href="/p5/gray.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body >
+		<nav
+			class="navbar navbar-expand-lg navbar-dark"
+			style="background-color: #464775"
+		>
+			<button
+				class="navbar-toggler"
+				type="button"
+				data-toggle="collapse"
+				data-target="#navbarTogglerDemo03"
+				aria-controls="navbarTogglerDemo03"
+				aria-expanded="false"
+				aria-label="Toggle navigation"
+			>
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<a class="navbar-brand" href="/room/">Meteor Teams</a>
+
+			<div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+				<ul class="navbar-nav mr-auto mt-2 mt-lg-0" style="width: 80%; justify-content: center;">
+					<li class="nav-item active" class="nav-item active" style="width: 60%;margin-right: 2%">
+						<input
+						    id="searchbar"
+							class="form-control"
+							placeholder="&#xf002; Search"
+							style="font-family: 'Font Awesome 5 Free';font-weight: 600"
+						/>
+					</li>
+		
+				</ul>
+				<form class="form-inline my-2 my-lg-0" style="width: 20%;">
+					<ul
+						class="navbar-nav mr-auto mt-2 mt-lg-0"
+						style="width:100%;justify-content:flex-end;"
+
+						
+					><div class="dropdown">
+						<li>
+							<%= username %>
+					
+						</li>
+							<div class="dropdown-content">
+							<a  href="/profile/" style="display: flex;padding-top: 5px;"  ><span class="material-icons">
+account_box
+</span>Profile</a>
+							<a href="https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri=https://meteor-teams.herokuapp.com/logout" style="display: flex;padding-top: 5px;" ><span class="material-icons">
+exit_to_app
+</span>Signout</a>
+						</div>
+						</div>
+					
+					</ul>
+				</form>
+					
+			</div>
+		</nav>
+		<div class="maincontainer">
+		<div class="channel-window">
+			
+			<div>
+					<a href="/room/"   class="back" >
+					<span class="material-icons">
+chevron_left
+</span><b style="margin-bottom:10px;">All teams</b></a>
+ <div class="piccontainer" >
+	 
+
+	<div class="pic"><img  src="https://place-hold.it/80/<%=room.color%>/fff&text=<%=room.name[0].toUpperCase()%>&fontsize=20px"></img>
+	</div></div>
+			<div style="display: flex;justify-content:space-between"><strong style="margin-left: 10%;margin-bottom: 5%;overflow: hidden;"><%=room.name%></strong>
+				<div class="dropdown" >
+<span class="material-icons" >
+menu
+</span>
+<div class="dropdown-content" >
+							<a  href="../create" style="width:160px;display:flex;padding-left: 10px;	padding-top: 5px;" ><span class="material-icons"style="margin-right: 5px;">
+add
+</span>Create Channel</a>
+		
+							<a  href="../add" style="width:160px;display:flex;padding-left: 10px;padding-top: 5px;" ><span class="material-icons" style="margin-right: 5px;">person_add</span>Add member</a>
+							<a style="width: 160px;display:flex;padding-left: 10px;padding-top: 5px;" href="#" data-toggle="modal" data-target="#teamparticipants"><span class="material-icons"style="margin-right: 5px;">group</span> <div >Team members</div></a>
+							<a href="../leave" style="width:160px;display:flex;padding-left: 10px;padding-top: 5px;" > <span class="material-icons"style="margin-right: 5px;">
+logout
+</span> Leave team</a>
+
+
+	
+		
+						</div>
+						</div>
+</div>
+			</div>
+        <div id="channel-show">
+			<% for(var i=0; i<all_channels.length; i++) {%>
+
+<div class="channel" id="channel_<%=all_channels[i]._id%>">
+	<a class="channel-link" href="../<%=all_channels[i]._id%>/"><%=all_channels[i].name%></a>
+	</div>
+	
+
+<% } %>
+			</div>
+		</div>
+
+		<div class="chat-window">
+	
+			
+			<div style="width:85% ;height:98%;display:flex;flex-direction:column;margin-left:7.5%;margin-right:7.5%;">
+						<div class="grp-window-header">
+	<div  class="teams"><strong style="overflow: hidden;"><%=channel.name%></strong></div>
+
+	<div style="display: flex;width:100%;justify-content:flex-end">
+   
+								<a id="create_meet" class="custom_link" href="#" data-toggle="modal" data-target="#RoomcreationModal" style="align-items:center;text-decoration: none;color:black;"
+							
+                   >
+                   
+						<span  style="font-size:30px;cursor: pointer;color:black;padding-right: 5px;"class="material-icons" >video_call</span> <b>Start/Schedule Meet </b></a>
+					
+			<div class="dropdown" >
+<span class="material-icons">
+menu
+</span>
+
+<div class="dropdown-content" id="ifnotgeneral" >
+							<a  href="./add/" style="width:160px;display:flex;padding-left: 10px;padding-top: 5px;" ><span class="material-icons" style="margin-right:5px">person_add</span>Add member</a>
+							<a style="width:160px;display:flex;padding-left: 10px;padding-top: 5px;" href="#" data-toggle="modal" data-target="#participants"><span class="material-icons" style="margin-right: 5px;">group</span>Members </a>
+							<a style="width:160px;display:flex;padding-left: 10px;padding-top: 5px;" href="#" data-toggle="modal" data-target="#meets"><span class="material-icons" style="margin-right: 5px;">meeting_room</span>Meets </a>
+							<a href="./leave" style="width:160px;display:flex;padding-left: 10px;padding-top: 5px;" ><span class="material-icons" style="margin-right: 5px;">logout</span>Leave Channel</a>
+
+
+						</div>
+				
+						</div>
+				</div>
+</div>
+			<div id="chat-show">
+			
+							</div>
+				<div style="display:flex;flex-direction:row;"> 
+        <div id="text" style="width:100%;"></div>
+
+		<div style="height:100% ;display: flex;height:100%;align-items: center;" >
+					<a
+						id="submit_button"
+						type="button"
+						href="#"
+						onclick="shower()"
+					>
+						<i class="fa fa-paper-plane"></i>
+				</a>
+					</div>
+
+
+				</div> 
+				</div>
+
+
+
+		</div>
+		</div>
+		</div>
+		<div class="modal fade" id="RoomcreationModal" tabindex="-1" role="dialog"
+            aria-labelledby="RoomcreationModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content" style="background: #f4f4f4;box-shadow: 0px 0px 15px black;color: black;">
+                    <div class="modal-header" style="border-color: #292929;">
+                        <h5 class="modal-title" id="RoomcreationModalLongTitle">Create meet</h5>
+                    </div>
+                    <form>
+
+                        <div class="modal-body"  style="border-color: #292929;overflow:auto">
+							
+                            <div class="form-group">
+                                <label for="meetname">Meet Name</label>
+                                <input type="text" class="form-control" id="meetname" style="color: black;" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="meetdate">Meet Start Date</label>
+                                <input type="date" class="form-control" id="meetdate" style="color: black;" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="meettime">Meet Start Time</label>
+                                <input type="time" class="form-control" id="meettime" style="color: black;" required>
+                            </div>
+                    
+                        </div>
+                        <div class="modal-footer" style="border-color: #292929;">
+                            <button type="button" id="meet_modal_close" class="btn btn-secondary"
+                                data-dismiss="modal">Close</button>
+                            <button class="btn btn-primary" type="button" onclick="link()"  data-dismiss="modal">Create
+                                meet</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+			<div class="modal fade" id="participants" tabindex="-1" role="dialog"
+            aria-labelledby="RoomcreationModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content" style="background: #f4f4f4;box-shadow: 0px 0px 15px black;color: black;">
+                    <div class="modal-header" style="border-color: #292929;">
+                        <h5 class="modal-title" id="RoomcreationModalLongTitle">Channel Members</h5>
+                    </div>
+					 <div class="modal-body"  style="border-color: #292929;overflow:auto">
+							<% for(var i=0; i<channel.users.length; i++) {%>
+
+<div style="display:flex;justify-content:space-evenly">
+	<div><%=channel.users[i].username%> </div> 
+	<div><%=channel.users[i].mail%></div></div>
+
+<% } %>
+                  </div>
+
+                </div>
+            </div>
+        </div><div class="modal fade" id="teamparticipants" tabindex="-1" role="dialog"
+            aria-labelledby="RoomcreationModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content" style="background: #f4f4f4;box-shadow: 0px 0px 15px black;color: black;">
+                    <div class="modal-header" style="border-color: #292929;">Team Members</h5>
+                    </div>
+					 <div class="modal-body"  style="border-color: #292929;overflow:auto">
+							<% for(var i=0; i<room.users.length; i++) {%>
+
+<div style="display:flex;justify-content:space-evenly">
+	<div><%=room.users[i].username%> </div> 
+	<div><%=room.users[i].mail%></div></div>
+
+<% } %>
+                  </div>
+
+                </div>
+            </div>
+        </div>
+		<div class="modal fade" id="meets" tabindex="-1" role="dialog"
+            aria-labelledby="RoomcreationModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content" style="background: #f4f4f4;box-shadow: 0px 0px 15px black;color: black;">
+                    <div class="modal-header" style="border-color: #292929;">Channel Meets</h5>
+                    </div>
+					 <div class="modal-body"  style="border-color: #292929;overflow:auto">
+							<% for(var i=0; i<channel.meets.length; i++) {%>
+
+<div style="display:flex;justify-content:space-evenly">
+	<a href="./meet/<%=channel.meets[i]._id%>/" class="meet-link" style="text-decoration:none;color:black"><b><%=channel.meets[i].name%> </b></a>
+</div>
+
+<% } %>
+                  </div>
+
+                </div>
+            </div>
+        </div>
+  	  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/mode/xml/xml.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.6.0//js/froala_editor.pkgd.min.js"></script>
+<script src="/channel.js" defer></script>
+	</body>
+</html>

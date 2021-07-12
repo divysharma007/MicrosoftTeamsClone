@@ -1,6 +1,7 @@
 body {
 	margin: 0%;
 	padding: 0%;
+	overflow: hidden;
 
 }
 
@@ -183,3 +184,10 @@ background-color: #ea4335
   border: 3px solid;  /* creates padding around scroll thumb */
 }
 
+.fr-draggable,
+.fr-fic,
+.fr-dvb,
+.fr-video,
+iframe {
+  width: 100% !important;
+}

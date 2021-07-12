@@ -1,21 +1,22 @@
 const mongoose = require("mongoose");
 const MessageSchema = new mongoose.Schema({
+	// name of sender 
 	name: {
 		type: String,
 		required: true,
 	},
+	// msg content
 	content: {
 		type: String,
-		required: true,
 	},
+	// Date and time when the message was sent 
 	date: {
 		type: String,
-	
 	},
-	type: {
+	// email of the sender 
+	mail: {
 		type: String,
-		required: true,
-	}
+	},
 });
 
 const MessageModel = mongoose.model("message", MessageSchema);

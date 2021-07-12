@@ -1,14 +1,17 @@
 const mongoose = require("mongoose");
 const UserSchema = new mongoose.Schema({
+	// email of the user
 	mail: {
 		type: String,
 		required: true,
 	},
+	// name of the user
 	username: {
 		type: String,
 		required: true,
 	},
-	rooms: [{ type: mongoose.Schema.Types.ObjectID, ref: "room" }],
+	// All the teams in which user is present/is authorized to access
+	rooms: [{ type: mongoose.Schema.Types.ObjectID, ref: "team" }],
 
 });
 

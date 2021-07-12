@@ -79,30 +79,25 @@ body {
 }
 
 #chat-show::-webkit-scrollbar {
-	width: 10px; /* width of the entire scrollbar */
+	width: 10px;
 }
 
 #chat-show::-webkit-scrollbar-thumb {
-	background-color: #f4f4f4; /* color of the scroll thumb */
-	border-radius: 20px; /* roundness of the scroll thumb */
-	border: 3px solid; /* creates padding around scroll thumb */
+	background-color: #f4f4f4; 
+	border-radius: 20px; 
+	border: 3px solid; 
 }
 a:link,
 a:visited {
 	background-color: transparent;
 	color: black;
-
 }
 li {
 	display: flex;
 	align-items: center;
 	color: whitesmoke;
 }
-.dropdown {
-	position: relative;
-    font-family: inherit; 
-    margin: 0; 
-}
+
 
 .dropdown-content {
 	display: none;
@@ -112,66 +107,106 @@ li {
 	box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
 	z-index: 1;
 }
-.dropdown-content  a:hover {
+.dropdown-content a:hover {
 	text-decoration: none;
 	color: black;
 	background-color: #ddd;
 }
-.channel  a:hover {
-     display: inline-block;
-     text-align: left;
-    width: 100%;
+.channel a:hover {
+	display: inline-block;
+	text-align: left;
+	width: 100%;
 	text-decoration: none;
 	color: black;
 	background-color: darkgray;
 }
-
+.channel a{
+	padding-left: 10%;
+}
 .dropdown:hover .dropdown-content {
 	display: flex;
 	flex-direction: column;
+
+}
+.dropdown{
+	margin-right: 5%;
+	margin-left: 5%;
 }
 .grp {
-  text-align: center;
-  font-size: 1.5rem;
-  overflow: hidden;
-    background-color:linen;
-	  border:2px solid #e1dfdd;
-  text-overflow: ellipsis;
-
-
+	text-align: center;
+	font-size: 1.5rem;
+	overflow: hidden;
+	background-color: rgba(255, 255, 255, 0.8);
+	border: 2px solid #e1dfdd;
+	text-overflow: ellipsis;
 }
 .pic {
-  font-weight: 900;
-  text-align: center;
+ align-items: center;
+ justify-content: center;
   font-size: 10vmin;
-  background-color:lightcoral;
+display: flex;
+background-color: white;
+
+  	
+
+
+		
+
+}
+.piccontainer{
+
+
+	width: fit-content;
+	margin-left: 10%;
+	margin-bottom: 10%;
+
+
+
 }
 
-.grp-window-header{
-	display:flex;
+.grp-window-header {
+	display: flex;
 	justify-content: space-between;
-	margin-top: 1%;}
-/* }
-.join-create{
-	display:flex;
-	width:fit-content;
-	height:fit-content;
-	padding-right:2%;
-	align-self: center;
-
-
-
+	margin-top: 1%;
 }
-.join-create a:hover {
-	text-decoration: none;
-	color: black;
-	background-color: #ddd;
+.teams {
+	display: flex;
+	align-items: center;
+	min-width: fit-content;
 }
-.join-create a{
-		width:100%;
-		height:100%;
-		background-color: white;
-		border: 1px solid ;
-		border-color: #e1dfdd;
+#create_meet {
+	display: flex;
+	text-align: center;
+	background-color: transparent;
+	color: transparent;
+}
+.channel-link {
+	display: inline-block;
+	width: 100%;
 	
-} */
+}
+.meet-link{
+	display: inline-block;
+	width: 100%;
+	
+}
+.meet-link:hover {
+	display: inline-block;
+	width: 100%;
+	background-color: darkgray;
+	
+}
+.back:hover{
+	color: #464775;
+		text-decoration: none;
+
+}
+.back{
+	margin-left:8%;
+	display: flex;
+	text-decoration: none;
+	margin-top: 5%;
+}
+
+
+

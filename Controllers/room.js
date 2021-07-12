@@ -1,275 +1,347 @@
 const express = require("express");
 const router = express.Router();
-const room = require("../models/Room");
-const channel = require("../models/Channel");
-const User = require("../models/User");
-const Room = require("../models/Room");
-const builder = require("./builder.js");
+const ChannelRepository = require("../Repository/ChannelRepository.js");
+const UserRepository = require("../Repository/UserRepository.js");
+const TeamRepository = require("../Repository/TeamRepository.js");
+const builder = require("./TokenBuilder.js");
 module.exports = router;
-const { v4: uuidV4 } = require("uuid");
+// Renders all Teams in which user is present 
 router.get("/", async (req, res) => {
 	try {
-		console.log(req.session.userdata);
-		const user = await User.findOne({
-			mail: req.session.userdata.userPrincipalName,
-		}).populate("rooms");
-
-		console.log(user, "3535353");
-
-		// console.log(user.rooms, "433434")	;
+	const user =await  UserRepository.getuserwithrooms(req.session.userdata.userPrincipalName);
 
 		res.render("home", { rooms: user.rooms });
 	} catch (err) {
 		res.send("Error" + err);
 	}
 });
+// Creates new Team and adds default channel General
 router.post("/create", async (req, res) => {
-	console.log("form received")
-	console.log(req.body)
-	const usersstr = req.body.users.split(' ')
-	usersstr.push(req.session.userdata.userPrincipalName)
-	
-		
-	const newteam = new Room({
-		name: req.body.teamname,
-		discription: req.body.teamdis,
-	});
-	
-		const newchannel = new channel({
-			name:"General",
-			discription: "General channel",
-		});
 
-	newteam.channels.push(newchannel._id)
-	await newteam.save();
+	const usersstr = req.body.users.split(" ");
+	usersstr.push(req.session.userdata.userPrincipalName);
+	const newchannel =await  ChannelRepository.createchannel("General", "General Channel");
+	const newteam = await TeamRepository.createteam(
+		req.body.teamname,
+		req.body.teamdis
+	); 
+	newteam.channels.push(newchannel._id);
 
-    var users = [];
-	for (var i = 0; i < usersstr.length; i++) {
-		u=await User.findOne({
-			mail: usersstr[i],
-		});
-		console.log(u);
-		if (u!=null && !users.includes(u._id)) {
-			u.rooms.push(newteam._id)
+
+	let users = [];
+
+	for (let i = 0; i < usersstr.length; i++) {
+	
+		u = await UserRepository.getuser(usersstr[i]);
+		if (u != null && !users.includes(u._id) &&!newteam.users.includes(u._id)) {
+			u.rooms.push(newteam._id);
 			await u.save();
 			users.push(u._id);
-			newchannel.users.push(u._id)
+			newchannel.users.push(u._id);
+			newteam.users.push(u._id);
 		}
 	}
-		await newchannel.save();
-	
-	
-	res.redirect("./")
 	
 
+	await newteam.save();
+	await newchannel.save();
 
-})
-router.get("/create", (req, res) => {
-	res.render("creategrp")
+	res.redirect("./");
+});
+//Renders Team creation form
+router.get("/create", async(req, res) => {
+	const users = await UserRepository.getallusers();
+	res.render("creategrp",{users:users});
 });
 
-router.get("/:id/video/", (req, res) => {
-	console.log(req.params.id);
-
-	res.redirect(`./${uuidV4()}`);
+//Renders channel creation form
+router.get("/:roomid/channel/create", async (req, res) => {
+	let single_team = await TeamRepository.getTeamwithusers(req.params.roomid);
+		if (!single_team) {
+			res.render("notfound");
+		}
+	res.render("createchannel",{room: single_team});
 });
+// Creates a new channel and adds it to the Team from which it was called
+router.post("/:roomid/channel/create", async (req, res) => {
+	const usersstr = req.body.users.split(" ");
+	usersstr.push(req.session.userdata.userPrincipalName);
 
-router.get("/:roomid/channel/:channelid/video/:video", async (req, res) => {
-	// console.log(req.params.video);
-	// const user = await User.findOne({
-	// 		mail: req.session.userdata.userPrincipalName,
-	// 	});
-	// 	var auth = user.rooms.includes(req.params.id);
-	var auth = true;
-	if (auth) {
-		const builders = builder(req.params.video);
-		console.log(builders);
-		res.render("vroom", {
-			uid: builders.uid,
-			agoraappID: builders.agoraappID,
-			channelName: builders.channelName,
-			token: builders.token,
-			screentoken: builders.screentoken,
-			screenuid: builders.screenuid,
-		});
-	} else {
-		res.send("not Authorized");
+	let team = await TeamRepository.getTeam(req.params.roomid);
+		if (!team) {
+			res.render("notfound");
+		}
+	const newchannel = await ChannelRepository.createchannel(req.body.channelname, req.body.channeldes);
+	
+	team.channels.push(newchannel._id);
+	await team.save();
+
+	let users = [];
+	for (let i = 0; i < usersstr.length; i++) {
+		u = await UserRepository.getuser(usersstr[i]);
+
+		if (u != null && !users.includes(u._id) && u.rooms.includes(team._id)) {
+			users.push(u._id);
+			newchannel.users.push(u._id);
+		} 
 	}
+	await newchannel.save();
+
+	res.redirect("./" + newchannel._id + "/");
 });
-router.get("/:roomid/channel/create",  (req, res) => {
-
-	res.render("createchannel")
-});
-router.post("/:roomid/channel/create", async(req, res) => {
-
-const usersstr = req.body.users.split(" ");
-usersstr.push(req.session.userdata.userPrincipalName);
-
-grp = await room.findById(req.params.roomid);
-
-const newchannel = new channel({
-	name: req.body.channelname,
-	discription:req.body.channeldes,
-});
-
-
-grp.channels.push(newchannel._id);
-await grp.save();
-
-var users = [];
-for (var i = 0; i < usersstr.length; i++) {
-	u = await User.findOne({
-		mail: usersstr[i],
-	});
-
-	if (u!=null && !users.includes(u._id) && u.rooms.includes(grp._id)) {
-		users.push(u._id);
-		newchannel.users.push(u._id);
-	} else {
-		console.log(u,'nooo')
-	}
-}
-await newchannel.save();
-
-res.redirect("./"+newchannel._id+"/");
-	
-});
+// User leaves Team
 router.get("/:roomid/channel/leave", async (req, res) => {
-	console.log("here");
-	const user = await User.findOne({
-		mail: req.session.userdata.userPrincipalName,
-	}).populate("rooms");
+	
+	const user = await UserRepository.getuser(
+		req.session.userdata.userPrincipalName
+	);
 
-	grp = await room.findById(req.params.roomid).populate("channels");
-	for (var i = 0; i < user.rooms.length; i++) {
-		if (user.rooms[i]._id == req.params.roomid) {
+	let team = await TeamRepository.getTeamwithchannels(req.params.roomid);
+		if (!team) {
+			res.render("notfound");
+		}
+	for (let i = 0; i < user.rooms.length; i++) {
+		if (String(user.rooms[i]) == String(req.params.roomid)) {
 			user.rooms.splice(i, 1);
 			await user.save();
-			
+			break;
+		
 		}
 	}
-
-	for (var i = 0; i < grp.channels.length; i++) {
-		
-		for (var j = 0; j < grp.channels[i].users.length; j++) {
-			if (String(grp.channels[i].users[j]._id) == String(user._id)) {
-				grp.channels[i].users.splice(j, 1);
-				await grp.channels[i].save();
+	for (let i = 0; i < team.users.length; i++) {
+		if (String(team.users[i]) == String(user._id)) {
+			team.users.splice(i, 1);
+			break;
+		}
+	}
+	for (let i = 0; i < team.channels.length; i++) {
+		for (let j = 0; j < team.channels[i].users.length; j++) {
+			if (String(team.channels[i].users[j]._id) == String(user._id)) {
+				team.channels[i].users.splice(j, 1);
+				await team.channels[i].save();
 				break;
-			} 
+			}
 		}
-	
-		
-	
-		
-		
 	}
-	await grp.save();
+	await team.save();
 	res.redirect("/room/");
 });
+//Renders form which will add other users to this Team
 router.get("/:roomid/channel/add", async (req, res) => {
-	single_room = await room.findById(req.params.roomid).populate("channels")
-	str =single_room.name +" team"
-	res.render("adduser",{str:str});
-})
+	const users = await UserRepository.getallusers();
+	let team = await TeamRepository.getTeamwithchannels(req.params.roomid);
+		if (!team) {
+			res.render("notfound");
+		}
+	let str = team.name + " team";
+	res.render("addgrpuser", { str: str ,room: team,users:users});
+});
+//Form contains emails of the users  to be added
 router.post("/:roomid/channel/add", async (req, res) => {
-	users = [];
-	grp = await room.findById(req.params.roomid).populate("channels");
+	let users = [];
+	let team = await TeamRepository.getTeamwithchannels(req.params.roomid);
+		if (!team) {
+			res.render("notfound");
+		}
 	const usersstr = req.body.users.split(" ");
-	for (var i = 0; i < usersstr.length; i++) {
-		u = await User.findOne({
-			mail: usersstr[i],
-		});
+	if (usersstr.length > 0) {
+		for (let i = 0; i < usersstr.length; i++) {
+			let u = await UserRepository.getuser(usersstr[i]);
+// If the user is present in Team otherwise nothing will happen .Also if the user already exists nothing will happen
+			if (u != null && !users.includes(u._id) && !team.channels[0].users.includes(u._id)) {
+				u.rooms.push(team._id);
+				team.users.push(u._id);
 
-		if (u != null && !users.includes(u._id)) {
-			u.rooms.push(grp._id);
+				team.channels[0].users.push(u._id);
+				await u.save();
+			}
+		}
+		await team.channels[0].save();
+		await team.save()
+	}
+//Redirects back to general channel
+	res.redirect("/room/"+req.params.roomid+"/channel/"+team.channels[0].id+"/");
+});
+//Renders channel with id channelid
+router.get("/:roomid/channel/:channelid/", async (req, res) => {
+	let single_channel =await  ChannelRepository.getchannelusermeets(
+		req.params.channelid
+	);
+	if (!single_channel) {
+		res.render("notfound")
+	}
+	const user = await UserRepository.getuser(
+		req.session.userdata.userPrincipalName
+	);
+	let team = await TeamRepository.getTeamwithchannelsusers(req.params.roomid)
+		if (!team) {
+			res.render("notfound");
+		}
+	let auth = false;
+	//Checks if the Channel consists of this user else renders not authorized page which tells that user is not present in this channel
+	for (let i = 0; i < single_channel.users.length; i++) {
+		if (String(single_channel.users[i]._id) ==String(user._id)) { auth = true; break;}
 
-			grp.channels[0].users.push(u._id);
-			await u.save();
+	}
+
+	let all_channels = [];
+	for (let i = 0; i < team.channels.length; i++) {
+		if (team.channels[i].users.includes(user.id)) {
+			all_channels.push(team.channels[i]);
 		}
 	}
-	await grp.channels[0].save()
-
-	res.redirect("../");
-});
-router.get("/:roomid/", async (req, res) => {
-
-	single_room = await room.findById(req.params.roomid).populate("channels")
-	single_channel=single_room.channels[0]
-	const user = await User.findOne({
-		mail: req.session.userdata.userPrincipalName,
-	});
-	var auth = single_channel.users.includes(user.id);
 	if (auth) {
-		res.redirect("./channel/"+single_channel.id+"/")
-	} else {
-		res.send("not Authorized");
-	}
-});
-
-router.get("/:roomid/channel/:channelid/", async (req, res) => {
-	const func = uuidV4;
-	single_channel = await channel.findById(req.params.channelid);
-	const user = await User.findOne({
+		res.render("channel", {
+			room: team,
+			channel: single_channel,
+			all_channels: all_channels,
 			mail: req.session.userdata.userPrincipalName,
-	});
-	single_room = await room.findById(req.params.roomid);
-	var auth = single_channel.users.includes(user.id);
-	
-	if (auth) {
-		res.render("room", { room: single_room,channel:single_channel, uuidV4: func ,p:single_room.name[0].toUpperCase()});
+		});
 	} else {
-		res.send("not Authorized");
+		res.render("notauthorized");
 	}
 });
+//Renders Video meet page where conference takes place 
+router.get(
+	"/:roomid/channel/:channelid/meet/:meetid/video",
+	async (req, res) => {
+		const user = await UserRepository.getuser(
+			req.session.userdata.userPrincipalName
+		);
+		let single_channel = await ChannelRepository.getchannel(
+			req.params.channelid
+		);
+			if (!single_channel) {
+				res.render("notfound");
+			}
+		let meet_channel = await ChannelRepository.getchannel(req.params.meetid);
+			if (!meet_channel) {
+				res.render("notfound");
+			}
+		let auth = single_channel.users.includes(user._id);
+		// Checks if the Meet consists of this user else renders not authorized page which tells that user is not present in this channel
+		if (auth) {
+			const builders = builder(req.params.meetid);
+			res.render("videomeet", {
+				uid: builders.uid,
+				agoraappID: builders.appID,
+				channelName: builders.channelName,
+				token: builders.tokenforuser,
+				screentoken: builders.tokenforscreenshare,
+				screenuid: builders.screenuid,
+				channel: meet_channel,
+				mail: req.session.userdata.userPrincipalName,
+			});
+		} else {
+			res.render("notauthorized");
+		}
+	}
+);
+router.get("/:roomid/channel/:channelid/meet/:meetid/", async (req, res) => {
+	let single_channel = await ChannelRepository.getchannelmeets(
+		req.params.channelid
+	);
+		if (!single_channel) {
+			res.render("notfound");
+		}
+	const user = await UserRepository.getuser(
+		req.session.userdata.userPrincipalName
+	);
+	let team = await TeamRepository.getTeam(req.params.roomid);
+		if (!team) {
+			res.render("notfound");
+		}
+	// Checks if the Meet consists of this user else renders not authorized page which tells that user is not present in this channel
+	let auth = single_channel.users.includes(user.id);
+	let meet_channel = await ChannelRepository.getchannel(req.params.meetid);
+		if (!meet_channel) {
+			res.render("notfound");
+		}
+//Checks if the Channel consists of this user else renders not page which tells that user is not present in this channel
+	if (auth) {
+		res.render("meet", {
+			meet: meet_channel,
+			channel: single_channel,
+			mail: req.session.userdata.userPrincipalName,
+			room:team,
+		});
+	} else {
+		res.render("notauthorized");
+	}
+});
+// User is removed from the channel
 router.get("/:roomid/channel/:channelid/leave", async (req, res) => {
-	const user = await User.findOne({
-		mail: req.session.userdata.userPrincipalName,
-	});
-   const single_room= await room.findById(req.params.roomid)
-	getchannel = await channel.findById(req.params.channelid)
-	if (String(single_room.channels[0]) !=String( getchannel._id)) {
-		console.log(single_room.channels[0],getchannel)
-		for (var i = 0; i < getchannel.users.length; i++) {
+	const user = await UserRepository.getuser(
+		req.session.userdata.userPrincipalName
+	);
+	let team = await TeamRepository.getTeam(req.params.roomid);
+		if (!team) {
+			res.render("notfound");
+		}
+	let getchannel = await ChannelRepository.getchannel(
+		req.params.channelid
+	);
+		if (!getchannel) {
+			res.render("notfound");
+		}
+	if (String(team.channels[0]) != String(getchannel._id)) {
+		
+		for (let i = 0; i < getchannel.users.length; i++) {
 			if (String(user._id) == String(getchannel.users[i]._id)) {
 				getchannel.users.splice(i, 1);
 				await getchannel.save();
 			}
 		}
-		
 	}
-	str = "/room/" + req.params.roomid + "/";
+	str = "/room/" + req.params.roomid + "/channel/"+team.channels[0]+"/";
 	res.redirect(str);
 });
+// Renders the form which will add  users to the channel 
 router.get("/:roomid/channel/:channelid/add", async (req, res) => {
- const single_room= await room.findById(req.params.roomid)
-	getchannel = await channel.findById(req.params.channelid)
-	if (String(single_room.channels[0]) != String(getchannel._id)) {
-		str = getchannel.name + " channel"
-		res.render("adduser", { str: str });
-	} else {
-		res.redirect("./")
-	}
-	
-});
-router.post("/:roomid/channel/:channelid/add", async (req, res) => {
-	users = []
-	getchannel = await channel.findById(req.params.channelid);
-	grp = await room.findById(req.params.roomid);
-    const usersstr = req.body.users.split(" ");
-	for (var i = 0; i < usersstr.length; i++) {
-		u=await User.findOne({
-			mail: usersstr[i],
-		});
-
-		if (u!=null && !users.includes(u._id) &&u.rooms.includes(grp._id)) {
-			getchannel.users.push(u._id)
+	let team = await TeamRepository.getTeamwithusers(req.params.roomid);
+		if (!team) {
+			res.render("notfound");
 		}
+	let getchannel = await ChannelRepository.getchannel(req.params.channelid);
+		if (!getchannel) {
+			res.render("notfound");
+		}
+	if (String(team.channels[0]) != String(getchannel._id)) {
+		let str = getchannel.name + " channel";
+		res.render("adduser", { str: str ,room:team});
+	} else {
+		res.redirect("./");
 	}
-
+});
+// Adds users to the given channel 
+router.post("/:roomid/channel/:channelid/add", async (req, res) => {
+	let users = [];
+	let getchannel = await ChannelRepository.getchannel(req.params.channelid);
+		if (!getchannel) {
+			res.render("notfound");
+		}
+	let team = await TeamRepository.getTeam(req.params.roomid);
+		if (!team) {
+			res.render("notfound");
+		}
 	
-	
-	await getchannel.save()
-	res.redirect("../")
+	const usersstr = req.body.users.split(" ");
+	if (usersstr.length > 0) {
+		for (let i = 0; i < usersstr.length; i++) {
+			let u = await UserRepository.getuser(usersstr[i]);
+// if the user is present in Team then only user is added in the channel
+			if (
+				u != null &&
+				!users.includes(u._id) &&
+				u.rooms.includes(team._id) &&
+				!getchannel.users.includes(u._id)
+			) {
+				getchannel.users.push(u._id);
+			}
+		}
 
+
+		await getchannel.save();
+	}
+	res.redirect("../");
 });

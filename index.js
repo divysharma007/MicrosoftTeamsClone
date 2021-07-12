@@ -8,16 +8,16 @@ const roomrouter = require("./Controllers/room");
 const io = require("socket.io")(server);
 const bodyParser = require("body-parser");
 const session = require("express-session");
-const Message = require("./models/Message.js");
-const channel = require("./models/Channel.js");
-const User = require("./models/User.js");
+const MessageRepository = require("./Repository/MessageRepository.js");
+const ChannelRepository = require("./Repository/ChannelRepository.js");
+const UserRepository = require("./Repository/UserRepository.js");
 const mongodbStore = require("connect-mongodb-session")(session);
 const morgan = require("mongoose-morgan");
 var path = require("path");
 app.set("view engine", "ejs");
 
 app.use(express.static(path.join(__dirname, "/public")));
-console.log(path.join(__dirname, "/public"));
+
 dburi =
 	"mongodb+srv://divy:abc@cluster0.ehpvg.mongodb.net/microsoft-clone?retryWrites=true&w=majority";
 mongoose.connect(dburi, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -33,11 +33,28 @@ app.use(
 		store: store,
 	})
 );
-app.use(
-	morgan({
-		connectionString: dburi,
-	}, {},'short')
-);
+app.use(morgan({ connectionString: dburi }, {}, "short"));
+morgan.token("remote-user", function (req, res, params) {
+	if (req.session) {
+		return req.session.userdata ? req.session.userdata.userPrincipalName : undefined;
+	}
+});
+
+morgan.token("status", function (req, res, params) {
+	if (req.method == "GET" || req.method == "PUT") {
+		return 200;
+	}
+	if (req.method == "POST") {
+		return 201;
+	}
+	if (req.method == "DELETE") {
+		return 204;
+	}
+});
+
+morgan.token("res", function (req, res, params) {
+	return String(new Date());
+});
 app.use((req, res, next) => {
 	if (req.session.userdata)
 		res.locals.username = req.session.userdata.displayName;
@@ -57,11 +74,11 @@ con.on("open", () => {
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use("/", authrouter);
 
 app.use((req, res, next) => {
 	if (!req.session.logged) req.session.logged = false;
-	console.log(req.session.logged, req.url);
 	if (!req.session.logged || !req.session.userdata) {
 		res.redirect("/");
 	} else {
@@ -79,49 +96,66 @@ app.use("/logout", (req, res) => {
 	res.redirect("/");
 });
 app.use("/profile/", async (req, res) => {
-	const user = await User.findOne({
-		mail: req.session.userdata.userPrincipalName,
-	}).populate("rooms");
+	const user = await UserRepository.getuserwithrooms(
+		req.session.userdata.userPrincipalName
+	);
 	res.render("profile",{user:user})
+})
+app.use("/", (req, res) => {
+	res.render("notfound")
 })
 
 io.on("connection", (socket) => {
+	
 	socket.on("join-chat-room", (roomid) => {
-		console.log(roomid);
+	
 		socket.join(roomid);
-		console.log(socket.id, roomid);
-
-		socket.on("message", (message) => {
-			console.log(socket.id, roomid, message);
-			socket.broadcast.to(roomid).emit("message", message);
-			console.log("message received and broadcasted");
+	
+		socket.on("adduser", (username) => {
+			socket.broadcast.to(roomid).emit("adduser",username,socket.id);
 		});
+		
+	
+		socket.on("message", async (username, data,timestr,mail) => {
+			text = data;
+	
+			var single_channel = await ChannelRepository.getchannel(roomid);
+			const newmessage = await MessageRepository.createmessage(username, text, timestr, mail);
+			
+			single_channel.messages.push(newmessage.id);
+			await single_channel.save();
+			socket.broadcast
+				.to(roomid)
+				.emit("message", username,text, timestr,mail);
+		
+		});
+		socket.on("disconnect", () => {
+			socket.broadcast.to(roomid).emit("removeuser", socket.id);
+			
+			});
+
 	});
 	socket.on("join-group", (GroupId) => {
 		socket.join(GroupId);
 		
 		
-		socket.on("message", async (username, data,timestr,type) => {
+		socket.on("message", async (username, data,timestr,mail,link) => {
 			text = data;
 	
-			var single_channel = await channel.findById(GroupId);
-			const newmessage = new Message({
-				name: username,
-				content:text,
-				date: timestr,
-				type:type
-			});
-			await newmessage.save();
+			var single_channel = await ChannelRepository.getchannel(GroupId);
+			const newmessage = await MessageRepository.createmessage(username, text, timestr, mail);
 			single_channel.messages.push(newmessage.id);
+			if (link) {
+				single_channel.meets.push(link);
+			}
+	
 			await single_channel.save();
-			socket.broadcast.to(GroupId).emit("message", username, text, timestr,type);
-			console.log("message received and broadcasted");
+			socket.broadcast.to(GroupId).emit("message", username, text, timestr,mail);
+			
 		});
 
 		socket.on("disconnect", () => {
-		
-			
-			socket.broadcast.to(GroupId).emit("user-disconnected", GroupId);
+		  socket.broadcast.to(GroupId).emit("user-disconnected", GroupId);
 		});
 	});
 });

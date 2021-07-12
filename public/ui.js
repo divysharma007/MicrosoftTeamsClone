@@ -1,4 +1,5 @@
-// UI buttons
+// User Interface buttons
+// enables button to the stream given in the function
 function enableUiControls(localStream) {
 	$("#mic-btn").prop("disabled", false);
 	$("#video-btn").prop("disabled", false);
@@ -14,65 +15,65 @@ function enableUiControls(localStream) {
 	});
 
 	$("#screen-share-btn").click(function () {
-		console.log(123);
+	
 		toggleScreenShareBtn(); // set screen share button icon
 		$("#screen-share-btn").prop("disabled", true); // disable the button on click
-		console.log(screenShareActive);
-		if (screenShareActive) {
-			stopScreenShare();
+	
+		if (IsscreenShareActive) {
+			StopScreenShare();
 			document.getElementById("screen-share-icon").innerHTML = "screen_share";
 		} else {
-			console.log("adsdasdasdas");
-			initScreenShare(agoraAppId, channelName);
+			
+			ShareScreen(AppId, channelName);
 			document.getElementById("screen-share-icon").innerHTML =
 				"stop_screen_share";
 		}
 	});
 
 	$("#exit-btn").click(function () {
-		console.log("so sad to see you leave the channel");
-		leaveChannel();
+		
+		leaveMeet();
 	});
 
-	// keyboard listeners
+	// keyboard-listeners 
 	$(document).on("keydown", function (e) {
 		if (e.ctrlKey) {
 			switch (e.key) {
 				case "m":
-					console.log("squick toggle the mic");
+					
 					toggleMic(localStream);
 					break;
 				case "v":
-					console.log("quick toggle the video");
+					
 					toggleVideo(localStream);
 					break;
 				case "x":
-					console.log("initializing screen share");
-					toggleScreenShareBtn(); // set screen share button icon
-					$("#screen-share-btn").prop("disabled", true); // disable the button on click
-					if (screenShareActive) {
-						stopScreenShare();
+					
+					toggleScreenShareBtn(); // set screen-share button icon
+					$("#screen-share-btn").prop("disabled", true); // disable the scren-share button on click
+					if (IsscreenShareActive) {
+						StopScreenShare();
 						document.getElementById("screen-share-icon").innerHTML =
 							"screen_share";
 					} else {
 						document.getElementById("screen-share-icon").innerHTML =
 							"stop_screen_share";
-						initScreenShare(agoraAppId, channelName);
+						ShareScreen(AppId, channelName);
 					}
 					break;
 				case "q":
-					console.log("so sad to see you quit the channel");
-					leaveChannel();
+					
+					leaveMeet();
 					break;
 				case "z":
 					chat();
 					break;
-				default: // do nothing
+			
 			}
 
-			// (for testing)
+			
 			if (e.key === "r") {
-				window.history.back(); // quick reset
+				window.history.back(); 
 			}
 		}
 	});
@@ -123,12 +124,3 @@ function toggleVideo(localStream) {
 		toggleVisibility("#no-local-video", true); // show the user icon when video is disabled
 	}
 }
-
-$(document).keydown((e) => {
-	var msg = document.getElementById("chat_message");
-	var isFocused = document.activeElement === msg;
-	if (e.which == 13 && msg.value.length !== 0 && isFocused) {
-		//console.log(msg.val());
-		message();
-	}
-});

@@ -2,40 +2,29 @@ const express = require("express");
 const router = express.Router();
 const channel = require("../models/Channel");
 const User = require("../models/User");
-const room = require("../models/Room");
+// Renders all the messages of the channel  
 router.get("/channel/:id", async (req, res) => {
-	single_channel = await channel.findById(req.params.id).populate("messages");
+	single_channel = await channel.findById(req.params.id).populate("messages").select("messages");
 	res.json(single_channel);
 });
-router.get("/room/:id", async (req, res) => {
-	single_room = await room.findById(req.params.id).populate("channels").select("channels");
-	const user = await User.findOne({
-		mail: req.session.userdata.userPrincipalName,
-	});
-	all_channels = []
-	for (var i = 0; i < single_room.channels.length; i++) {
-		if (single_room.channels[i].users.includes(user.id)) {
-all_channels.push(single_room.channels[i])
-		 }
-	}
-		
 
-	// var messages = single_room.messages;r
-	res.json(all_channels);
+//Renders all the users of the channel
+router.get("/channel/:id/users", async (req, res) => {
+	single_channel = await channel.findById(req.params.id).populate("users").select("users");
+	res.json(single_channel);
 });
-router.get("/rooms/", async (req, res) => {
-	const user = await User.findOne({
-		mail: req.session.userdata.userPrincipalName,
-	})
-		.populate("rooms")
-		.select("rooms");
-	return res.json(user);
-});
+// Renders all the users using this webapp
 router.get("/users", async (req, res) => {
 	const users = await User.find();
-
-	console.log(users);
 	return res.json(users);
+});
+// Creates a new channel
+router.post("/channel", async (req, res) => {
+	const newchannel = new channel({
+	name:req.body.name
+	})
+	await newchannel.save();
+	res.json(newchannel);
 });
 
 module.exports = router;

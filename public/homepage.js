@@ -1,10 +1,12 @@
-var allrooms=[]
+allrooms = JSON.parse(allrooms);
 const searchbar = document.getElementById("searchbar");
-const grpcontainer=document.getElementById("grp-show")
+const grpcontainer = document.getElementById("grp-show")
+
+// renders Teams according to search bar value
 searchbar.addEventListener("keyup", async (e) => {
 	const searchstr = e.target.value.toLowerCase();
 	var rooms = allrooms;
-	newrooms = rooms.data.rooms.filter((room) => {
+	newrooms = rooms.filter((room) => {
 		return (
 			room.name.toLowerCase().includes(searchstr) 
 		);
@@ -13,46 +15,29 @@ searchbar.addEventListener("keyup", async (e) => {
 	while (grpcontainer.firstChild) {
 		grpcontainer.removeChild(grpcontainer.lastChild);
 	}
+	
 	newrooms.map((room) => {
 		let grp = document.createElement("a");
-		grp.setAttribute("href", "./" + room._id + "/");
-
+		grp.setAttribute("href", "./" + room._id + "/channel/"+room.channels[0]+"/");
+        let str = `https://place-hold.it/80/${room.color}/fff&text=${room.name[0].toUpperCase()}&fontsize=25px`;
+		piccontainer = document.createElement("div");
+		piccontainer.setAttribute("class", "piccontainer");
 		pic = document.createElement("div");
-		pic.innerHTML = room.name[0].toUpperCase();
-
 		pic.setAttribute("class", "pic");
-		grp.appendChild(pic);
+		img = document.createElement("img");
+		img.setAttribute("src", str);
+		img.style.paddingTop ="10px"
+		pic.appendChild(img);
 
 		grpname = document.createElement("div");
 		grpname.innerHTML = room.name;
 		grpname.setAttribute("class", "grp");
-
-		grp.appendChild(grpname);
+        piccontainer.appendChild(pic);
+		piccontainer.appendChild(grpname);
+		grp.append(piccontainer);
 		grp.setAttribute("class", "grpcard");
+		
 		grpcontainer.appendChild(grp);
 	});
 });
-const displayrooms = async () => {
-	var rooms = await axios.get(`/api/rooms/`);
-	allrooms=rooms
-	console.log(rooms);
-	rooms.data.rooms.map((room) => {
-		let grp = document.createElement("a");
-		grp.setAttribute("href", "./" + room._id + "/");
 
-		pic = document.createElement("div");
-		pic.innerHTML = room.name[0].toUpperCase();
-
-		pic.setAttribute("class", "pic");
-		grp.appendChild(pic);
-
-		grpname = document.createElement("div");
-		grpname.innerHTML = room.name;
-		grpname.setAttribute("class", "grp");
-
-		grp.appendChild(grpname);
-		grp.setAttribute("class", "grpcard");
-		grpcontainer.appendChild(grp);
-	});
-};
-displayrooms();
