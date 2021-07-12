@@ -11,7 +11,7 @@ const configuration = {
 		authority: "https://login.microsoftonline.com/common",
 		clientSecret: "D~6Pp~38Y6yPb1w.2X_Ltnw~YN-OA27xw7",
 		postlogoutRedirectUri:
-			"https://meteor-teams.herokuapp.com/logout",
+			"http://localhost:3000/logout",
 	},
 	system: {
 		loggerOptions: {
@@ -27,8 +27,8 @@ const msal_cca = new msal.ConfidentialClientApplication(configuration);
 router.get("/", (req, res) => {
 	req.session.logged = true;
 	const authCodeUrlParametersNeeded = {
-		scopes: ["user.read", "Mail.read"],
-		redirectUri: "https://meteor-teams.herokuapp.com/redirect",
+		scopes: ["user.read"],
+		redirectUri: "http://localhost:3000/redirect",
 	};
 
 	msal_cca
@@ -42,8 +42,8 @@ router.get("/", (req, res) => {
 router.get("/redirect", (req, res) => {
 	const RequestforToken = {
 		code: req.query.code,
-		scopes: ["user.read", "mail.read"],
-		redirectUri: "https://meteor-teams.herokuapp.com/redirect",
+		scopes: ["user.read"],
+		redirectUri: "http://localhost:3000/redirect",
 	};
 
 	msal_cca
