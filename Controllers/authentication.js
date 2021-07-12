@@ -42,7 +42,7 @@ router.get("/", (req, res) => {
 router.get("/redirect", (req, res) => {
 	const RequestforToken = {
 		code: req.query.code,
-		scopes: ["user.read", "mail.read"],
+		scopes: ["user.read"],
 		redirectUri: "https://meteor-teams.herokuapp.com/redirect",
 	};
 
