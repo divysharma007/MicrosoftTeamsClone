@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title><%=channel.name%> channel's meets</title>
+
+		<link rel="shortcut icon" type="image/png" href="/favicon.png">
+		<script>
+			const MEET_ID = "<%=meet.id %>";
+			const CHANNEL_ID = "<%=channel.id%>";
+		
+			
+		
+          
+		</script>
+		<script src="/socket.io/socket.io.js" defer></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>	
+		<link rel="stylesheet" href="/room-style.css" />
+
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"
+			integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w=="
+			crossorigin="anonymous"
+			referrerpolicy="no-referrer"
+		/>
+		<link
+			rel="stylesheet"
+			href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+			integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+			crossorigin="anonymous"
+		/>
+		<script
+			src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+			integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+			crossorigin="anonymous"
+		></script>
+		<script
+			src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+			integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+			crossorigin="anonymous"
+		></script>
+		<script
+			src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+			integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+			crossorigin="anonymous"
+		></script>
+	<style> body {padding: 0; margin: 0;} </style>
+    <script src="/p5/p5.min.js"></script>
+    <script src="/p5/addons/p5.dom.min.js"></script>
+    <script src="/p5/addons/p5.sound.min.js"></script>
+    <script src="/socket.io/socket.io.js" defer></script>
+	<link rel="stylesheet" href="/main.css"/>
+    <script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.min.css">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.6.0/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.6.0/css/froala_style.min.css" rel="stylesheet" type="text/css" />
+</head>
+<script type="text/javascript">
+	const username= "<%= username %>"
+	const mail= "<%=mail%>"
+
+	
+	</script>
+		<link
+			href="https://fonts.googleapis.com/icon?family=Material+Icons"
+			rel="stylesheet"
+		/>
+			<link href="/p5/gray.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body >
+		<nav
+			class="navbar navbar-expand-lg navbar-dark"
+			style="background-color: #464775"
+		>
+			<button
+				class="navbar-toggler"
+				type="button"
+				data-toggle="collapse"
+				data-target="#navbarTogglerDemo03"
+				aria-controls="navbarTogglerDemo03"
+				aria-expanded="false"
+				aria-label="Toggle navigation"
+			>
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<a class="navbar-brand" href="/room/">Meteor Teams</a>
+
+			<div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+				<ul class="navbar-nav mr-auto mt-2 mt-lg-0" style="width: 80%; justify-content: center;">
+					<li class="nav-item active" class="nav-item active" style="width: 60%;margin-right: 2%">
+						<input
+						    id="searchbar"
+							class="form-control"
+							placeholder="&#xf002; Search"
+							style="font-family: 'Font Awesome 5 Free';font-weight: 600"
+						/>
+					</li>
+		
+				</ul>
+				<form class="form-inline my-2 my-lg-0" style="width: 20%;">
+					<ul
+						class="navbar-nav mr-auto mt-2 mt-lg-0"
+						style="width:100%;justify-content:flex-end;"
+
+						
+					><div class="dropdown">
+						<li>
+							<%= username %>
+					
+						</li>
+							<div class="dropdown-content">
+							<a  href="/profile/" style="display: flex;padding-top: 5px;" ><span class="material-icons">
+account_box
+</span>Profile</a>
+							<a href="https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri=https://meteor-teams.herokuapp.com/logout" style="display: flex;padding-top: 5px;" ><span class="material-icons">
+exit_to_app
+</span>Signout</a>
+						</div>
+						</div>
+					
+					</ul>
+				</form>
+					
+			</div>
+		</nav>
+		<div class="maincontainer">
+		<div class="channel-window">
+		<div>
+				<a href="/room/<%=room.id%>/channel/<%=channel.id%>/" style="display: flex;text-decoration: none;"  class="back" >
+					<span class="material-icons" >
+chevron_left
+</span><b style="margin-bottom:10px;">back to channel</b></a>
+ <div class="piccontainer">
+
+	<div class="pic"><img  src="https://place-hold.it/80/<%=channel.color%>/fff&text=<%=meet.name[0].toUpperCase()%>&fontsize=20px"></img>
+	</div></div>
+			<div style="display: flex;justify-content:space-between"><strong style="margin-left: 10%;margin-bottom: 5%;overflow: hidden;"><%=channel.name%> channel's Meets-</strong>
+					
+				</div>
+				</div>
+        <div id="channel-show">
+				
+<% for(var i=0; i<channel.meets.length; i++) {%>
+
+<div class="channel">
+	<a href="../<%=channel.meets[i]._id%>/" class="channel-link" id="channel_<%=channel.meets[i]._id%>"><%=channel.meets[i].name%></a>
+	</div>
+	
+
+<% } %>
+			
+
+			</div>
+		</div>
+
+		<div class="chat-window">
+
+			
+			<div style="width:85% ;height:98%;display:flex;flex-direction:column;margin-left:7.5%;margin-right:7.5%;">
+						<div class="grp-window-header">
+
+	<div  class="teams"><strong style="overflow: hidden;"><%=meet.name%></strong></div>
+	<div style="display: flex;width:100%;justify-content:flex-end">
+
+								<a id="create_meet" class="custom_link" href="./video"
+                   >
+                   
+						<span  class="btn btn-primary">join meet</span> </a>
+					
+
+				</div>
+</div>
+			<div id="chat-show">
+			
+							</div>
+				<div style="display:flex;flex-direction:row;"> 
+        <div id="text" style="width:100%;"></div>
+		<div style="height:100% ;display: flex;height:100%;align-items: center;" >
+					<a
+						id="submit_button"
+						type="button"
+						href="#"
+						onclick="shower()"
+					>
+						<i class="fa fa-paper-plane"></i>
+				</a>
+					</div>
+
+
+				</div> 
+				</div>
+
+
+
+		</div>
+		</div>
+		</div>
+	
+					
+  	  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/mode/xml/xml.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.6.0//js/froala_editor.pkgd.min.js"></script>
+<script src="/meet.js" defer></script>
+	</body>
+</html>

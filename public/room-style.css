@@ -1,0 +1,212 @@
+* {
+	padding: 0%;
+	margin: 0%;
+}
+body {
+	height: 100vh;
+}
+.header {
+	display: flex;
+	align-items: center;
+	font-size: 3vmin;
+	height: 7%;
+	background-color: #464775;
+}
+.control-input {
+	width: 60%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+}
+#searchbar {
+	background-color: rgba(255, 255, 255, 0.8);
+	width: 100%;
+}
+#searchbar:focus::placeholder {
+	color: transparent;
+}
+#searchbar:focus {
+	background-color: #f5f5f5;
+}
+.placeicon {
+	font-family: "Font Awesome 5 Free";
+	font-weight: 600;
+}
+.title {
+	padding-left: 5%;
+	color: whitesmoke;
+}
+
+.profile {
+	text-align: right;
+	width: 17%;
+}
+.title {
+	width: 23%;
+}
+.maincontainer {
+	box-sizing: border-box;
+	height: 92%;
+	width: 100%;
+	display: flex;
+}
+.chat-window {
+	box-sizing: border-box;
+	height: 100%;
+	width: 80%;
+	display: flex;
+	flex-direction: column;
+}
+.channel-window {
+	width: 20%;
+	display: flex;
+	flex-direction: column;
+	background-color: #f4f4f4;
+}
+#chat-show {
+	box-sizing: border-box;
+	height: 70%;
+	width: 100%;
+
+	margin: auto;
+	display: flex;
+	flex-direction: column;
+	overflow: auto;
+}
+.chat-input {
+	display: flex;
+	justify-content: center;
+}
+
+#chat-show::-webkit-scrollbar {
+	width: 10px;
+}
+
+#chat-show::-webkit-scrollbar-thumb {
+	background-color: #f4f4f4; 
+	border-radius: 20px; 
+	border: 3px solid; 
+}
+a:link,
+a:visited {
+	background-color: transparent;
+	color: black;
+}
+li {
+	display: flex;
+	align-items: center;
+	color: whitesmoke;
+}
+
+
+.dropdown-content {
+	display: none;
+	position: absolute;
+	background-color: #f9f9f9;
+	min-width: 100%;
+	box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+	z-index: 1;
+}
+.dropdown-content a:hover {
+	text-decoration: none;
+	color: black;
+	background-color: #ddd;
+}
+.channel a:hover {
+	display: inline-block;
+	text-align: left;
+	width: 100%;
+	text-decoration: none;
+	color: black;
+	background-color: darkgray;
+}
+.channel a{
+	padding-left: 10%;
+}
+.dropdown:hover .dropdown-content {
+	display: flex;
+	flex-direction: column;
+
+}
+.dropdown{
+	margin-right: 5%;
+	margin-left: 5%;
+}
+.grp {
+	text-align: center;
+	font-size: 1.5rem;
+	overflow: hidden;
+	background-color: rgba(255, 255, 255, 0.8);
+	border: 2px solid #e1dfdd;
+	text-overflow: ellipsis;
+}
+.pic {
+ align-items: center;
+ justify-content: center;
+  font-size: 10vmin;
+display: flex;
+background-color: white;
+
+  	
+
+
+		
+
+}
+.piccontainer{
+
+
+	width: fit-content;
+	margin-left: 10%;
+	margin-bottom: 10%;
+
+
+
+}
+
+.grp-window-header {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 1%;
+}
+.teams {
+	display: flex;
+	align-items: center;
+	min-width: fit-content;
+}
+#create_meet {
+	display: flex;
+	text-align: center;
+	background-color: transparent;
+	color: transparent;
+}
+.channel-link {
+	display: inline-block;
+	width: 100%;
+	
+}
+.meet-link{
+	display: inline-block;
+	width: 100%;
+	
+}
+.meet-link:hover {
+	display: inline-block;
+	width: 100%;
+	background-color: darkgray;
+	
+}
+.back:hover{
+	color: #464775;
+		text-decoration: none;
+
+}
+.back{
+	margin-left:8%;
+	display: flex;
+	text-decoration: none;
+	margin-top: 5%;
+}
+
+
+
