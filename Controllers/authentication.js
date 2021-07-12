@@ -27,7 +27,7 @@ const msal_cca = new msal.ConfidentialClientApplication(configuration);
 router.get("/", (req, res) => {
 	req.session.logged = true;
 	const authCodeUrlParametersNeeded = {
-		scopes: ["user.read", "Mail.read"],
+		scopes: ["user.read"],
 		redirectUri: "https://meteor-teams.herokuapp.com/redirect",
 	};
 
