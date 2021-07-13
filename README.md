@@ -84,6 +84,8 @@ npm start
 ## Structure Used :
 * ### Model,View,Controller
 * ### Repository Pattern
+## Find basic data flow design here:
+* https://www.figma.com/file/w4h1wcdlhcxdWWZZbSluYC/Meteor-Teams?node-id=0%3A1
 
 
 ## Author :
